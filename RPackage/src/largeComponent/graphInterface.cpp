@@ -19,6 +19,7 @@ largeComponent::context graphInterface(SEXP graph_sexp, SEXP probabilities_sexp)
 	}
 
 	boost::shared_ptr<largeComponent::context::inputGraph> boostGraph(new largeComponent::context::inputGraph());
+	graphConvert(graph_sexp, *boostGraph.get()); 
 	std::size_t nVertices = boost::num_vertices(*boostGraph);
 	if(probabilities.size() != nVertices && probabilities.size() != 1)
 	{

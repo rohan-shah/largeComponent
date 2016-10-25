@@ -3,7 +3,7 @@ set(CppFiles register.cpp crudeMC.cpp graphConvert.cpp graphAMInterface.cpp grap
 set(HeaderFiles crudeMC.h graphConvert.h graphAMInterface.h graphInterface.h graphNELInterface.h igraphInterface.h)
 add_library(largeComponentRPackage SHARED ${CppFiles} ${HeaderFiles})
 target_link_libraries(largeComponentRPackage PUBLIC largeComponentCommon Rcpp)
-set_target_properties(largeComponentRPackage PROPERTIES OUTPUT_NAME "largerComponent")
+set_target_properties(largeComponentRPackage PROPERTIES OUTPUT_NAME "largeComponent")
 
 if(WIN32)
 	target_compile_definitions(largeComponentRPackage PUBLIC _CRT_SECURE_NO_WARNINGS)

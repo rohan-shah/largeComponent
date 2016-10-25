@@ -1,5 +1,5 @@
 #' @export
-crudeMC <- function(probabilities, n, seed, graph)
+crudeMC <- function(probabilities, n, seed, graph, componentSize)
 {
 	if(missing(graph))
 	{
@@ -16,6 +16,14 @@ crudeMC <- function(probabilities, n, seed, graph)
 	if(missing(seed))
 	{
 		stop("Input seed cannot be missing")
+	}
+	if(missing(componentSize))
+	{
+		stop("Input componentSize cannot be missing")
+	}
+	if(length(componentSize) != 1 || mode(componentSize) != "numeric")
+	{
+		stop("Input `componentSize' must be a single number")
 	}
 	if(length(n) != 1 || mode(n) != "numeric")
 	{
@@ -36,7 +44,7 @@ crudeMC <- function(probabilities, n, seed, graph)
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		estimate <- .Call("crudeMC", graph, probabilities, n, seed, PACKAGE="largeComponent")
+		estimate <- .Call("crudeMC", graph, probabilities, n, seed, componentSize, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 

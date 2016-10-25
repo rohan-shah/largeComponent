@@ -7,13 +7,13 @@
 #endif
 extern "C" 
 {
-	const char* package_name = "largerComponent";
+	const char* package_name = "largeComponent";
 	R_CallMethodDef callMethods[] = 
 	{
-//		{"transferMatrixUnequalProbabilities", (DL_FUNC)&transferMatrixUnequalProbabilities, 1}, 
+		{"crudeMC", (DL_FUNC)&crudeMC, 5}, 
 		{NULL, NULL, 0}
 	};
-	RcppExport void R_init_largerComponent(DllInfo *info)
+	RcppExport void R_init_largeComponent(DllInfo *info)
 	{
 		std::vector<R_CallMethodDef> callMethodsVector;
 		R_CallMethodDef* packageCallMethods = callMethods;
