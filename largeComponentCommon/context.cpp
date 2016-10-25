@@ -1,7 +1,7 @@
 #include "largeComponentCommon/context.h"
 namespace largeComponent
 {
-	context::context(const inputGraph& graph, std::vector<mpfr_class>& opProbabilities)
+	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities)
 		:opProbabilities(opProbabilities), graph(graph)
 	{
 		std::transform(opProbabilities.begin(), opProbabilities.end(), std::back_inserter(opProbabilitiesD), [](mpfr_class& x){return x.convert_to<double>();});
@@ -11,11 +11,11 @@ namespace largeComponent
 	{}
 	const context::inputGraph& context::getGraph() const
 	{
-		return graph;
+		return *graph.get();
 	}
 	context& context::operator=(context&& other)
 	{
-		if(&graph != &other.graph)
+		if(graph.get() != other.graph.get())
 		{
 			throw std::runtime_error("Internal error");
 		}

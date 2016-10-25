@@ -28,6 +28,7 @@ else()
 endif()
 
 add_subdirectory(largeComponentCommon)
+add_subdirectory(copyText)
 if(BUILD_R_PACKAGE)
 	add_subdirectory(RPackage)
 	find_package(R REQUIRED)

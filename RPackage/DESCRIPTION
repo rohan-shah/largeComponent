@@ -1,0 +1,11 @@
+Package: largeComponent
+Type: Package
+Title: Monte Carlo methods for estimating the probability of a large component
+Version: 0.1
+Date: 2015-05-14
+Author: Rohan Shah
+Maintainer: Rohan Shah <cran@bookshah.com>
+Description: This package provides Monte Carlo methods for estimating the probability of a large component
+License: GPL v3
+LazyData: No
+Depends: Rmpfr, igraph (>= 1.0.1), graph
