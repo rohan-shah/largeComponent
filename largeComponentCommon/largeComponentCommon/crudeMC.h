@@ -1,6 +1,6 @@
 #ifndef CRUDE_MC_HEADER_GUARD
 #define CRUDE_MC_HEADER_GUARD
-#include "largeComponentCommon/context.h"
+#include "context.h"
 #include <boost/random/mersenne_twister.hpp>
 namespace largeComponent
 {

@@ -3,7 +3,7 @@
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/shared_ptr.hpp>
-#include "largeComponentCommon/context.h"
+#include "context.h"
 #include "depth_first_search_restricted.hpp"
 namespace largeComponent
 {

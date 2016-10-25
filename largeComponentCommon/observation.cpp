@@ -2,6 +2,9 @@
 #include <boost/random/uniform_real_distribution.hpp>
 namespace largeComponent
 {
+	observation::observation(context const&, boost::shared_array<const vertexState> state)
+		: contextObj(contextObj), state(state)
+	{}
 	observation::observation(context const& contextObj, boost::mt19937& randomSource)
 		: contextObj(contextObj)
 	{
@@ -55,5 +58,8 @@ namespace largeComponent
 	}
 	observation::observation(const observation& other)
 		: contextObj(other.contextObj), state(other.state)
+	{}
+	observation::observation(context const&, boost::shared_array<const vertexState> state, obs::basicConstructorType&)
+		: contextObj(contextObj), state(state)
 	{}
 }

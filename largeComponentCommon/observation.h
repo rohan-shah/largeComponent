@@ -4,12 +4,16 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
-#include "largeComponentCommon/context.h"
+#include "context.h"
+#include "observationConstructorTypes.h"
+#include "getObservation.hpp"
 namespace largeComponent
 {
 	class observation : public boost::noncopyable
 	{
 	public:
+		template<class T> friend class ::largeComponent::getObservation;
+		observation(context const&, boost::shared_array<const vertexState> state);
 		observation(context const&, boost::mt19937& randomSource);
 		observation(observation&& other);
 		observation& operator=(observation&& other);
@@ -21,6 +25,8 @@ namespace largeComponent
 		observation(const observation& other);
 		context const& contextObj;
 		boost::shared_array<const vertexState> state;
+	private:
+		observation(context const&, boost::shared_array<const vertexState> state, obs::basicConstructorType&);
 	};
 }
 #endif

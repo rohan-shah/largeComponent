@@ -1,4 +1,4 @@
-#include "largeComponentCommon/context.h"
+#include "context.h"
 namespace largeComponent
 {
 	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities)
