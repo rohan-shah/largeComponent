@@ -4,6 +4,11 @@ namespace largeComponent
 	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities)
 		:opProbabilities(opProbabilities), graph(graph)
 	{
+		std::size_t nVertices = boost::num_vertices(*graph.get());
+		if(opProbabilities.size() == 1 && opProbabilities.size() != nVertices)
+		{
+			this->opProbabilities.insert(this->opProbabilities.end(), nVertices - 1, opProbabilities[0]);
+		}
 		std::transform(opProbabilities.begin(), opProbabilities.end(), std::back_inserter(opProbabilitiesD), [](mpfr_class& x){return x.convert_to<double>();});
 	}
 	context::context(context&& other)

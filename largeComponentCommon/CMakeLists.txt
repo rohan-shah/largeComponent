@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
-set(CppFiles crudeMC.cpp context.cpp observation.cpp isLargeComponentPossible.cpp subObs.cpp subObsWithRadius.cpp)
-set(HeaderFiles largeComponentCommon/crudeMC.h vertexState.h context.h includeMPFRLargeComponent.h observation.h depth_first_search_restricted.hpp isLargeComponentPossible.h subObs.h observationConstructorTypes.h getObservation.hpp getSubObservation.hpp subObsWithRadius.h)
+set(CppFiles crudeMC.cpp context.cpp observation.cpp isLargeComponentPossible.cpp subObs.cpp subObsWithRadius.cpp importanceSamplingObservation.cpp importanceSampling.cpp)
+set(HeaderFiles largeComponentCommon/crudeMC.h vertexState.h context.h includeMPFRLargeComponent.h observation.h depth_first_search_restricted.hpp isLargeComponentPossible.h subObs.h observationConstructorTypes.h getObservation.hpp getSubObservation.hpp subObsWithRadius.h importanceSamplingObservation.h largeComponentCommon/importanceSampling.h)
 
 add_library(largeComponentCommon STATIC ${CppFiles} ${HeaderFiles})
 target_include_directories(largeComponentCommon PUBLIC ${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/largeComponentCommon ${IGRAPH_INCLUDES} ${boostGraphExt_include})

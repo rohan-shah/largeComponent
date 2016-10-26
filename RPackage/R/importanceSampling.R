@@ -1,5 +1,5 @@
 #' @export
-crudeMC <- function(probabilities, n, seed, graph, componentSize)
+importanceSampling <- function(probabilities, n, seed, graph, componentSize, importanceProbabilities)
 {
 	if(missing(graph))
 	{
@@ -21,6 +21,10 @@ crudeMC <- function(probabilities, n, seed, graph, componentSize)
 	{
 		stop("Input componentSize cannot be missing")
 	}
+	if(missing(importanceProbabilities))
+	{
+		stop("Input importanceProbabilities cannot be missing")
+	}
 	if(length(componentSize) != 1 || mode(componentSize) != "numeric")
 	{
 		stop("Input `componentSize' must be a single number")
@@ -41,14 +45,22 @@ crudeMC <- function(probabilities, n, seed, graph, componentSize)
 	{
 		stop("Input `probabilities' must be a numeric vector")
 	}
+	if(mode(importanceProbabilities) != "numeric")
+	{
+		stop("Input `importanceProbabilities' must be a numeric vector")
+	}
 	if(any(probabilities < 0 | probabilities > 1))
 	{
 		stop("Input `probabilities' must be between 0 and 1")
 	}
+	if(any(importanceProbabilities < 0 | importanceProbabilities > 1))
+	{
+		stop("Input `importanceProbabilities' must be between 0 and 1")
+	}
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		estimate <- .Call("crudeMC", graph, probabilities, n, seed, componentSize, PACKAGE="largeComponent")
+		result <- .Call("importanceSampling", graph, probabilities, n, seed, componentSize, importanceProbabilities, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 
@@ -56,5 +68,5 @@ crudeMC <- function(probabilities, n, seed, graph, componentSize)
 		stop("Input graph must have class \"igraph\", \"graphAM\" or \"graphNEL\"")
 	}
 	call <- match.call()
-	return(new("monteCarloResult", start = start, end = end, call = call, estimate = estimate))
+	return(new("importanceSamplingResult", start = start, end = end, call = call, estimate = mpfr(result$estimate), variance = mpfr(result$variance)))
 }
