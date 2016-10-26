@@ -3,9 +3,10 @@
 #include <vector>
 #include "depth_first_search_restricted.hpp"
 #include "context.h"
+#include <boost/shared_array.hpp>
 namespace largeComponent
 {
-	namespace obs
+	namespace observationConstructorTypes
 	{
 		struct basicConstructorType
 		{
@@ -13,6 +14,13 @@ namespace largeComponent
 			basicConstructorType(std::vector<int>& components, boost::detail::depth_first_visit_restricted_impl_helper<context::inputGraph>::stackType& stack);
 			std::vector<int>& components;
 			boost::detail::depth_first_visit_restricted_impl_helper<context::inputGraph>::stackType& stack;
+		};
+		struct sequentialConstructorType
+		{
+		public:
+			mpfr_class weight;
+			boost::shared_array<double> importanceProbabilities;
+			int radius;
 		};
 	}
 }

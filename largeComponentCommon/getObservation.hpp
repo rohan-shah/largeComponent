@@ -1,5 +1,5 @@
-#ifndef GET_SUB_OBSERVATION_HEADER_GUARD
-#define GET_SUB_OBSERVATION_HEADER_GUARD
+#ifndef GET_OBSERVATION_HEADER_GUARD
+#define GET_OBSERVATION_HEADER_GUARD
 #include <boost/random/mersenne_twister.hpp>
 #include "context.h"
 #include <boost/shared_array.hpp>

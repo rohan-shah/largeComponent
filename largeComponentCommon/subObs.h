@@ -12,7 +12,7 @@ namespace largeComponent
 	public:
 		template<class T> friend class ::largeComponent::getObservation;
 		typedef ::largeComponent::observation observationType;
-		typedef ::largeComponent::obs::basicConstructorType observationConstructorType;
+		typedef ::largeComponent::observationConstructorTypes::basicConstructorType observationConstructorType;
 
 		subObs& operator=(subObs&& other);
 		subObs(const context& contextObj, boost::shared_array<const vertexState> state);

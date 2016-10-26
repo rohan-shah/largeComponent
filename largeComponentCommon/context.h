@@ -18,10 +18,12 @@ namespace largeComponent
 		context& operator=(context&& other);
 		const std::vector<mpfr_class>& getOperationalProbabilities() const;
 		const std::vector<double>& getOperationalProbabilitiesD() const;
+		const int* getShortestDistances() const;
 	private:
 		std::vector<mpfr_class> opProbabilities;
 		std::vector<double> opProbabilitiesD;
 		boost::shared_ptr<const inputGraph> graph;
+		boost::shared_array<const int> shortestDistances;
 	};
 }
 #endif

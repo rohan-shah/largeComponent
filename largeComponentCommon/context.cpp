@@ -1,4 +1,6 @@
 #include "context.h"
+#include "contextImpl.h"
+#include <boost/graph/johnson_all_pairs_shortest.hpp>
 namespace largeComponent
 {
 	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities)
@@ -10,9 +12,19 @@ namespace largeComponent
 			this->opProbabilities.insert(this->opProbabilities.end(), nVertices - 1, opProbabilities[0]);
 		}
 		std::transform(opProbabilities.begin(), opProbabilities.end(), std::back_inserter(opProbabilitiesD), [](mpfr_class& x){return x.convert_to<double>();});
+
+		boost::shared_array<int> shortestDistances = boost::shared_array<int>(new int[nVertices*nVertices]);
+
+		contextImpl::twoDArray tmp;
+		tmp.base = shortestDistances.get();
+		tmp.dim = nVertices;
+
+		contextImpl::constant_property_map<context::inputGraph::edge_descriptor, 1> edgeWeights;
+		boost::johnson_all_pairs_shortest_paths(*graph.get(), tmp, boost::weight_map(edgeWeights));
+		this->shortestDistances = shortestDistances;
 	}
 	context::context(context&& other)
-		: opProbabilities(std::move(opProbabilities)), opProbabilitiesD(std::move(opProbabilitiesD)), graph(other.graph)
+		: opProbabilities(std::move(opProbabilities)), opProbabilitiesD(std::move(opProbabilitiesD)), graph(other.graph), shortestDistances(other.shortestDistances)
 	{}
 	const context::inputGraph& context::getGraph() const
 	{
@@ -26,6 +38,7 @@ namespace largeComponent
 		}
 		opProbabilities = std::move(other.opProbabilities);
 		opProbabilitiesD = std::move(other.opProbabilitiesD);
+		shortestDistances = other.shortestDistances;
 		return *this;
 	}
 	const std::vector<mpfr_class>& context::getOperationalProbabilities() const
@@ -35,5 +48,9 @@ namespace largeComponent
 	const std::vector<double>& context::getOperationalProbabilitiesD() const
 	{
 		return opProbabilitiesD;
+	}
+	const int* context::getShortestDistances() const
+	{
+		return shortestDistances.get();
 	}
 }

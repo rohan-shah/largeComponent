@@ -25,8 +25,10 @@ namespace largeComponent
 		observation(const observation& other);
 		context const& contextObj;
 		boost::shared_array<const vertexState> state;
+		void getSubObservation(int radius, vertexState* outputState) const;
+		static void getSubObservation(int radius, vertexState* newState, const context& contextObj, const vertexState* oldStatesPtr);
 	private:
-		observation(context const&, boost::shared_array<const vertexState> state, obs::basicConstructorType&);
+		observation(context const&, boost::shared_array<const vertexState> state, observationConstructorTypes::basicConstructorType&);
 	};
 }
 #endif
