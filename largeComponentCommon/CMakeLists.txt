@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
-set(CppFiles crudeMC.cpp context.cpp observation.cpp isLargeComponentPossible.cpp subObs.cpp importanceSamplingObservation.cpp importanceSampling.cpp subObsSequential.cpp observationSequential.cpp)
-set(HeaderFiles largeComponentCommon/crudeMC.h vertexState.h context.h includeMPFRLargeComponent.h observation.h depth_first_search_restricted.hpp isLargeComponentPossible.h subObs.h observationConstructorTypes.h getObservation.hpp getSubObservation.hpp importanceSamplingObservation.h largeComponentCommon/importanceSampling.h subObsSequential.h observationSequential.h contextImpl.h)
+set(CppFiles crudeMC.cpp context.cpp observation.cpp isLargeComponentPossible.cpp subObs.cpp importanceSamplingObservation.cpp importanceSampling.cpp subObsSequential.cpp observationSequential.cpp sequentialMethod.cpp)
+set(HeaderFiles largeComponentCommon/crudeMC.h vertexState.h context.h includeMPFRLargeComponent.h observation.h depth_first_search_restricted.hpp isLargeComponentPossible.h subObs.h observationConstructorTypes.h getObservation.hpp getSubObservation.hpp importanceSamplingObservation.h largeComponentCommon/importanceSampling.h subObsSequential.h observationSequential.h contextImpl.h largeComponentCommon/sequentialMethod.h)
 
 add_library(largeComponentCommon STATIC ${CppFiles} ${HeaderFiles})
 target_include_directories(largeComponentCommon PUBLIC ${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/largeComponentCommon ${IGRAPH_INCLUDES} ${boostGraphExt_include})
-target_link_libraries(largeComponentCommon PUBLIC ${Boost_LIBRARIES} mpfr)
+target_link_libraries(largeComponentCommon PUBLIC ${Boost_LIBRARIES} mpfr aliasMethod)
 
 target_compile_definitions(largeComponentCommon PUBLIC BOOST_ALL_NO_LIB BOOST_ALL_DYN_LINK)
 if(WIN32)

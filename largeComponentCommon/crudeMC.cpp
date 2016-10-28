@@ -11,7 +11,7 @@ namespace largeComponent
 		for(std::size_t i = 0; i < args.n; i++)
 		{
 			observation obs(contextObj, args.randomSource);
-			if(isLargeComponentPossible(contextObj.getGraph(), obs.getState(), args.componentSize, temp))
+			if(isLargeComponentOn(contextObj.getGraph(), obs.getState(), args.componentSize, temp))
 			{
 				hadLargeComponentCount++;
 			}

@@ -2,6 +2,14 @@
 #include <boost/random/bernoulli_distribution.hpp>
 namespace largeComponent
 {
+	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, mpfr_class newWeight)
+		: subObs(contextObj, state), weight(newWeight)
+	{}
+	subObsSequential subObsSequential::copyWithWeight(mpfr_class newWeight) const
+	{
+		subObsSequential retVal(contextObj, state, newWeight);
+		return retVal;
+	}
 	subObsSequential::subObsSequential(subObsSequential&& other)
 		:subObs(other), weight(other.weight)
 	{}
@@ -21,13 +29,13 @@ namespace largeComponent
 	void subObsSequential::getObservation(vertexState* newState, boost::mt19937& randomSource, observationConstructorType& other) const
 	{
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
-		const std::vector<double>& operationalProbabilitiesD = contextObj.getOperationalProbabilitiesD();
+		double* importanceProbabilities = other.importanceProbabilities.get();
 		memcpy(newState, state.get(), sizeof(vertexState)*nVertices);
 		for(std::size_t i = 0; i < nVertices; i++)
 		{
 			if(newState[i].state & UNFIXED_MASK)
 			{
-				boost::random::bernoulli_distribution<double> vertexDistribution(operationalProbabilitiesD[i]);
+				boost::random::bernoulli_distribution<double> vertexDistribution(importanceProbabilities[i]);
 				if(vertexDistribution(randomSource))
 				{
 					newState[i].state = UNFIXED_ON;
@@ -35,5 +43,6 @@ namespace largeComponent
 				else newState[i].state = UNFIXED_OFF;
 			}
 		}
+		other.weight = weight;
 	}
 }

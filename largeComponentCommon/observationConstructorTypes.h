@@ -20,7 +20,6 @@ namespace largeComponent
 		public:
 			mpfr_class weight;
 			boost::shared_array<double> importanceProbabilities;
-			int radius;
 		};
 	}
 }

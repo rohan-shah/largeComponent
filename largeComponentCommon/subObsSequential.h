@@ -23,7 +23,9 @@ namespace largeComponent
 		subObsSequential& operator=(subObsSequential&& other);
 		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::subObsConstructorTypes::sequentialConstructorType&);
 		const mpfr_class& getWeight() const;
+		subObsSequential copyWithWeight(mpfr_class newWeight) const;
 	private:
+		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, mpfr_class newWeight);
 		void getObservation(vertexState* newState, boost::mt19937& randomSource, observationConstructorType& other) const;
 		mpfr_class weight;
 	};

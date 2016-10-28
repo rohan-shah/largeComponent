@@ -2,6 +2,7 @@
 #include <internal.h>
 #include "crudeMC.h"
 #include "importanceSampling.h"
+#include "sequentialMethod.h"
 #ifdef _MSC_VER
 	#undef RcppExport
 	#define RcppExport extern "C" __declspec(dllexport)
@@ -13,6 +14,7 @@ extern "C"
 	{
 		{"crudeMC", (DL_FUNC)&crudeMC, 5}, 
 		{"importanceSampling", (DL_FUNC)&importanceSampling, 6}, 
+		{"sequentialMethod", (DL_FUNC)&sequentialMethod, 6}, 
 		{NULL, NULL, 0}
 	};
 	RcppExport void R_init_largeComponent(DllInfo *info)

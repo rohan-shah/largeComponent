@@ -14,7 +14,7 @@ namespace largeComponent
 		importanceSamplingObservation(context const&, boost::mt19937& randomSource, std::vector<double>& importanceProbabilities);
 		importanceSamplingObservation(importanceSamplingObservation&& other);
 		importanceSamplingObservation& operator=(importanceSamplingObservation&& other);
-		mpfr_class getWeight() const;
+		const mpfr_class& getWeight() const;
 	protected:
 		importanceSamplingObservation(const context& contextObj);
 		importanceSamplingObservation& operator=(const importanceSamplingObservation&);

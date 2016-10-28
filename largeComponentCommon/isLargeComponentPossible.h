@@ -17,5 +17,6 @@ namespace largeComponent
 		std::vector<int> table;
 	};
 	bool isLargeComponentPossible(const context::inputGraph& graph, const vertexState* state, std::size_t componentSize, isLargeComponentPossibleTemporaries& temp);
+	bool isLargeComponentOn(const context::inputGraph& graph, const vertexState* state, std::size_t componentSize, isLargeComponentPossibleTemporaries& temporaries);
 }
 #endif

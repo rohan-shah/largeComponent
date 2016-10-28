@@ -29,7 +29,7 @@ namespace largeComponent
 		}
 		this->state = state;
 	}
-	mpfr_class importanceSamplingObservation::getWeight() const
+	const mpfr_class& importanceSamplingObservation::getWeight() const
 	{
 		return weight;
 	}

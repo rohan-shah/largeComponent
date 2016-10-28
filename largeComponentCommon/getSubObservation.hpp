@@ -14,7 +14,7 @@ namespace largeComponent
 				boost::shared_array<vertexState> newState(new vertexState[boost::num_vertices(contextObj.getGraph())]);
 				input.getSubObservation(newState.get(), radius, otherData);
 
-				typename T::subObservationType retVal(contextObj, newState, radius, otherData);
+				typename T::subObservationType retVal(contextObj, newState, otherData);
 				return retVal;
 			}
 			template<typename U> static typename T::subObservationType get(const T& input, int radius, U& aux)
@@ -23,7 +23,7 @@ namespace largeComponent
 				boost::shared_array<vertexState> newState(new vertexState[boost::num_vertices(contextObj.getGraph())]);
 				input.getSubObservation(newState.get(), radius, aux);
 
-				typename T::subObservationType retVal(contextObj, newState, radius, aux);
+				typename T::subObservationType retVal(contextObj, newState, aux);
 				return retVal;
 			}
 		private:

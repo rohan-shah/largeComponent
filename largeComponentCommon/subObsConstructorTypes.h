@@ -10,9 +10,6 @@ namespace largeComponent
 		struct sequentialConstructorType
 		{
 		public:
-			sequentialConstructorType(mpfr_class weight)
-				:weight(weight)
-			{}
 			mpfr_class weight;
 		};
 	}

@@ -8,7 +8,7 @@ endif()
 
 if(BUILD_R_PACKAGE)
 	find_package(Rcpp REQUIRED)
-	set(RFiles R/crudeMC.R R/monteCarloResult-class.R R/onLoad.R R/importanceSampling.R R/importanceSamplingResult-class.R)
+	set(RFiles R/crudeMC.R R/monteCarloResult-class.R R/onLoad.R R/importanceSampling.R R/importanceSamplingResult-class.R R/sequentialImportanceSampling.R)
 	set(RPackageFiles DESCRIPTION ${RFiles})
 #Find location of Rcpp_exceptions.R 
 	get_property(RCPP_INCLUDE_DIRECTORIES TARGET Rcpp PROPERTY INTERFACE_INCLUDE_DIRECTORIES)

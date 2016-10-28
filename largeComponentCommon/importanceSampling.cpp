@@ -11,7 +11,7 @@ namespace largeComponent
 		for(std::size_t i = 0; i < args.n; i++)
 		{
 			importanceSamplingObservation obs(contextObj, args.randomSource, args.importanceProbabilities);
-			if(isLargeComponentPossible(contextObj.getGraph(), obs.getState(), args.componentSize, temp))
+			if(isLargeComponentOn(contextObj.getGraph(), obs.getState(), args.componentSize, temp))
 			{
 				sum += obs.getWeight();
 				sumSquares += obs.getWeight() * obs.getWeight();
