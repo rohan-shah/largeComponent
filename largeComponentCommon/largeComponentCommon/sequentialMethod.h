@@ -14,7 +14,7 @@ namespace largeComponent
 		sequentialMethodArgs(const context& contextObj, boost::random::mt19937& randomSource);
 		const context& contextObj;
 		boost::random::mt19937& randomSource; 
-		std::size_t n, componentSize;
+		std::size_t n;
 		mpfr_class estimate;
 		int initialRadius;
 		aliasTemporariesStruct aliasTemporaries;

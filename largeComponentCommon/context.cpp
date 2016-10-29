@@ -3,8 +3,8 @@
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
 namespace largeComponent
 {
-	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities)
-		:opProbabilities(opProbabilities), graph(graph)
+	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities, std::size_t componentSize)
+		:opProbabilities(opProbabilities), graph(graph), componentSize(componentSize)
 	{
 		std::size_t nVertices = boost::num_vertices(*graph.get());
 		if(opProbabilities.size() == 1 && opProbabilities.size() != nVertices)
@@ -24,7 +24,7 @@ namespace largeComponent
 		this->shortestDistances = shortestDistances;
 	}
 	context::context(context&& other)
-		: opProbabilities(std::move(opProbabilities)), opProbabilitiesD(std::move(opProbabilitiesD)), graph(other.graph), shortestDistances(other.shortestDistances)
+		: opProbabilities(std::move(opProbabilities)), opProbabilitiesD(std::move(opProbabilitiesD)), graph(other.graph), shortestDistances(other.shortestDistances), componentSize(other.componentSize)
 	{}
 	const context::inputGraph& context::getGraph() const
 	{
@@ -39,6 +39,7 @@ namespace largeComponent
 		opProbabilities = std::move(other.opProbabilities);
 		opProbabilitiesD = std::move(other.opProbabilitiesD);
 		shortestDistances = other.shortestDistances;
+		componentSize = other.componentSize;
 		return *this;
 	}
 	const std::vector<mpfr_class>& context::getOperationalProbabilities() const
@@ -52,5 +53,9 @@ namespace largeComponent
 	const int* context::getShortestDistances() const
 	{
 		return shortestDistances.get();
+	}
+	std::size_t context::getComponentSize() const
+	{
+		return componentSize;
 	}
 }

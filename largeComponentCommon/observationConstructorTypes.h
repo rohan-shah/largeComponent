@@ -10,10 +10,6 @@ namespace largeComponent
 	{
 		struct basicConstructorType
 		{
-		public:
-			basicConstructorType(std::vector<int>& components, boost::detail::depth_first_visit_restricted_impl_helper<context::inputGraph>::stackType& stack);
-			std::vector<int>& components;
-			boost::detail::depth_first_visit_restricted_impl_helper<context::inputGraph>::stackType& stack;
 		};
 		struct sequentialConstructorType
 		{

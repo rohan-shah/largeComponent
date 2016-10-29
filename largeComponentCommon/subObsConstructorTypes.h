@@ -3,6 +3,7 @@
 #include <vector>
 #include "depth_first_search_restricted.hpp"
 #include "context.h"
+#include "isLargeComponentPossible.h"
 namespace largeComponent
 {
 	namespace subObsConstructorTypes
@@ -10,7 +11,8 @@ namespace largeComponent
 		struct sequentialConstructorType
 		{
 		public:
-			mpfr_class weight;
+			isLargeComponentPossibleTemporaries temporaries;
+	 		mpfr_class weight;
 		};
 	}
 }

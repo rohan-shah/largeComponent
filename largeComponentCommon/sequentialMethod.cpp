@@ -18,11 +18,12 @@ namespace largeComponent
 		std::vector<observationSequential> observations;
 	
 		const context& contextObj = args.contextObj;
+		std::size_t componentSize = contextObj.getComponentSize();
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
 		for(std::size_t i = 0; i < nVertices; i++)
 		{
-			initialImportanceProbabilities[i] = (double)args.componentSize / (double)nVertices;
+			initialImportanceProbabilities[i] = (double)componentSize / (double)nVertices;
 		}
 
 		for(std::size_t i = 0; i < args.n; i++)
@@ -45,7 +46,7 @@ namespace largeComponent
 			for(std::vector<observationSequential>::iterator i = observations.begin(); i != observations.end(); i++)
 			{
 				subObsSequential sub = getSubObservation<observationSequential>::get(*i, currentRadius, getSubObsHelper);
-				if(isLargeComponentPossible(contextObj.getGraph(), sub.getState(), args.componentSize, temp))
+				if(isLargeComponentPossible(contextObj.getGraph(), sub.getState(), componentSize, temp))
 				{
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
@@ -97,7 +98,7 @@ namespace largeComponent
 				{
 					if(!(currentSubObsVertexState[j].state & FIXED_MASK))
 					{
-						importanceProbabilities[j] = (double)(args.componentSize - alreadyOn) / (double)unfixed;
+						importanceProbabilities[j] = (double)(componentSize - alreadyOn) / (double)unfixed;
 					}
 				}
 				observationSequential obs = getObservation<subObsSequential>::get(*i, args.randomSource, getObservationHelper);

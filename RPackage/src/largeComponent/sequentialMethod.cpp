@@ -64,12 +64,11 @@ BEGIN_RCPP
 	largeComponent::context::inputGraph graph;
 	graphConvert(graph_sexp, graph);
 
-	largeComponent::context contextObj = graphInterface(graph_sexp, probabilities_sexp);
+	largeComponent::context contextObj = graphInterface(graph_sexp, probabilities_sexp, componentSize);
 	boost::mt19937 randomSource;
 	randomSource.seed(seed);
 	largeComponent::sequentialMethodArgs args(contextObj, randomSource);
 	args.n = n;
-	args.componentSize = (std::size_t)componentSize;
 	args.initialRadius = initialRadius;
 
 	largeComponent::sequentialMethod(args);

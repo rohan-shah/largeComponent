@@ -12,7 +12,7 @@ namespace largeComponent
 		{}
 		const context& contextObj;
 		boost::random::mt19937& randomSource;
-		std::size_t n, componentSize;
+		std::size_t n;
 	};
 	std::size_t crudeMC(crudeMCArgs& args);
 }

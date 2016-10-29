@@ -12,18 +12,20 @@ namespace largeComponent
 	{
 	public:
 		typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, boost::no_property, boost::property<boost::edge_index_t, int> > inputGraph;
-		context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities);
+		context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities, std::size_t componentSize);
 		context(context&& other);
 		const inputGraph& getGraph() const;
 		context& operator=(context&& other);
 		const std::vector<mpfr_class>& getOperationalProbabilities() const;
 		const std::vector<double>& getOperationalProbabilitiesD() const;
 		const int* getShortestDistances() const;
+		std::size_t getComponentSize() const;
 	private:
 		std::vector<mpfr_class> opProbabilities;
 		std::vector<double> opProbabilitiesD;
 		boost::shared_ptr<const inputGraph> graph;
 		boost::shared_array<const int> shortestDistances;
+		std::size_t componentSize;
 	};
 }
 #endif
