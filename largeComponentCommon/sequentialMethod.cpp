@@ -18,6 +18,7 @@ namespace largeComponent
 		std::vector<observationSequential> observations;
 	
 		const context& contextObj = args.contextObj;
+		const std::vector<double>& opProbabilitiesD = contextObj.getOperationalProbabilitiesD();
 		std::size_t componentSize = contextObj.getComponentSize();
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
@@ -38,6 +39,8 @@ namespace largeComponent
 		observationSequential::subObsConstructorType getSubObsHelper;
 	
 		mpfr_class sumWeights = 0;
+
+		std::vector<int> alreadyOn, unfixed;
 		for(int currentRadius = args.initialRadius; currentRadius >= 0; currentRadius--)
 		{
 			subObservations.clear();
@@ -46,7 +49,7 @@ namespace largeComponent
 			for(std::vector<observationSequential>::iterator i = observations.begin(); i != observations.end(); i++)
 			{
 				subObsSequential sub = getSubObservation<observationSequential>::get(*i, currentRadius, getSubObsHelper);
-				if(isLargeComponentPossible(contextObj.getGraph(), sub.getState(), componentSize, temp))
+				if(sub.isLargeComponentPossible())
 				{
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
@@ -88,17 +91,37 @@ namespace largeComponent
 				double* importanceProbabilities = getObservationHelper.importanceProbabilities.get();
 				std::fill(importanceProbabilities, importanceProbabilities + nVertices, -1);
 				const vertexState* currentSubObsVertexState = i->getState();
-				std::size_t alreadyOn = 0, unfixed = 0;
+				const std::vector<int>& table = i->getTable();
+				const std::vector<int>& components = i->getComponents();
+
+				alreadyOn.resize(table.size());
+				unfixed.resize(table.size());
+				std::fill(alreadyOn.begin(), alreadyOn.end(), 0);
+				std::fill(unfixed.begin(), unfixed.end(), 0);
+
 				for(std::size_t j = 0; j < nVertices; j++)
 				{ 
-					if(currentSubObsVertexState[j].state == FIXED_ON) alreadyOn++;
-					else if(currentSubObsVertexState[j].state & UNFIXED_MASK) unfixed++;
+					if(currentSubObsVertexState[j].state == FIXED_ON)
+					{
+						alreadyOn[components[j]]++;
+					}
+					else if(currentSubObsVertexState[j].state & UNFIXED_MASK)
+					{
+						unfixed[components[j]]++;
+					}
 				}
 				for(std::size_t j = 0; j < nVertices; j++)
 				{
 					if(!(currentSubObsVertexState[j].state & FIXED_MASK))
 					{
-						importanceProbabilities[j] = (double)(componentSize - alreadyOn) / (double)unfixed;
+						if(table[components[j]] >= (int)componentSize)
+						{
+							importanceProbabilities[j] = (double)(componentSize - alreadyOn[components[j]]) / (double)unfixed[components[j]];
+						}
+						else
+						{
+							importanceProbabilities[j] = opProbabilitiesD[j];
+						}
 					}
 				}
 				observationSequential obs = getObservation<subObsSequential>::get(*i, args.randomSource, getObservationHelper);

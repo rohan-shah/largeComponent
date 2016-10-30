@@ -2,26 +2,49 @@
 #include <boost/random/bernoulli_distribution.hpp>
 namespace largeComponent
 {
-	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, mpfr_class newWeight)
-		: subObs(contextObj, state), weight(newWeight)
+	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state)
+		: subObs(contextObj, state)
 	{}
 	subObsSequential subObsSequential::copyWithWeight(mpfr_class newWeight) const
 	{
-		subObsSequential retVal(contextObj, state, newWeight);
+		subObsSequential retVal(contextObj, state);
+		retVal.weight = newWeight;
+		retVal.largeComponentPossible = largeComponentPossible;
+		retVal.components = components;
+		retVal.table = table;
 		return retVal;
 	}
 	subObsSequential::subObsSequential(subObsSequential&& other)
-		:subObs(other), weight(other.weight)
+		:subObs(other), weight(other.weight), largeComponentPossible(other.largeComponentPossible), components(std::move(other.components)), table(std::move(other.table))
 	{}
 	subObsSequential& subObsSequential::operator=(subObsSequential&& other)
 	{
 		subObs::operator=(other);
 		weight = other.weight;
+		largeComponentPossible = other.largeComponentPossible;
+		components = std::move(other.components);
+		table = std::move(other.table);
 		return *this;
 	}
 	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::subObsConstructorTypes::sequentialConstructorType& constructorType)
 		: subObs(contextObj, state), weight(constructorType.weight)
-	{}
+	{
+		largeComponentPossible = ::largeComponent::isLargeComponentPossible(contextObj.getGraph(), state.get(), contextObj.getComponentSize(), constructorType.temporaries);
+		components.swap(constructorType.temporaries.connectedComponents);
+		table.swap(constructorType.temporaries.table);
+	}
+	const std::vector<int>& subObsSequential::getTable() const
+	{
+		return table;
+	}
+	const std::vector<int>& subObsSequential::getComponents() const
+	{
+		return components;
+	}
+	bool subObsSequential::isLargeComponentPossible() const
+	{
+		return largeComponentPossible;
+	}
 	const mpfr_class& subObsSequential::getWeight() const
 	{
 		return weight;

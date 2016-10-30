@@ -24,10 +24,16 @@ namespace largeComponent
 		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::subObsConstructorTypes::sequentialConstructorType&);
 		const mpfr_class& getWeight() const;
 		subObsSequential copyWithWeight(mpfr_class newWeight) const;
+		bool isLargeComponentPossible() const;
+		const std::vector<int>& getTable() const;
+		const std::vector<int>& getComponents() const;
 	private:
-		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, mpfr_class newWeight);
+		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state);
 		void getObservation(vertexState* newState, boost::mt19937& randomSource, observationConstructorType& other) const;
 		mpfr_class weight;
+		bool largeComponentPossible;
+		std::vector<int> components;
+		std::vector<int> table;
 	};
 }
 #endif
