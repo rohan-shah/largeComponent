@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
-set(CppFiles register.cpp crudeMC.cpp graphConvert.cpp graphAMInterface.cpp graphInterface.cpp graphNELInterface.cpp igraphInterface.cpp importanceSampling.cpp sequentialMethod.cpp)
-set(HeaderFiles crudeMC.h graphConvert.h graphAMInterface.h graphInterface.h graphNELInterface.h igraphInterface.h importanceSampling.h sequentialMethod.h)
+set(CppFiles register.cpp crudeMC.cpp graphConvert.cpp graphAMInterface.cpp graphInterface.cpp graphNELInterface.cpp igraphInterface.cpp importanceSampling.cpp sequentialMethod.cpp conditionalMC.cpp)
+set(HeaderFiles crudeMC.h graphConvert.h graphAMInterface.h graphInterface.h graphNELInterface.h igraphInterface.h importanceSampling.h sequentialMethod.h conditionalMC.h)
 add_library(largeComponentRPackage SHARED ${CppFiles} ${HeaderFiles})
 target_link_libraries(largeComponentRPackage PUBLIC largeComponentCommon Rcpp)
 set_target_properties(largeComponentRPackage PROPERTIES OUTPUT_NAME "largeComponent")

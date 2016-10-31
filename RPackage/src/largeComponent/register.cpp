@@ -2,6 +2,7 @@
 #include <internal.h>
 #include "crudeMC.h"
 #include "importanceSampling.h"
+#include "conditionalMC.h"
 #include "sequentialMethod.h"
 #ifdef _MSC_VER
 	#undef RcppExport
@@ -14,6 +15,7 @@ extern "C"
 	{
 		{"crudeMC", (DL_FUNC)&crudeMC, 5}, 
 		{"importanceSampling", (DL_FUNC)&importanceSampling, 6}, 
+		{"conditionalMC", (DL_FUNC)&conditionalMC, 6}, 
 		{"sequentialMethod", (DL_FUNC)&sequentialMethod, 6}, 
 		{NULL, NULL, 0}
 	};
