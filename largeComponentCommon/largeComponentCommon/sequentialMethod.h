@@ -18,6 +18,8 @@ namespace largeComponent
 		mpfr_class estimate;
 		int initialRadius;
 		aliasTemporariesStruct aliasTemporaries;
+		std::vector<double> levelProbabilities;
+		std::vector<int> distinctParticles;
 	};
 	void sequentialMethod(sequentialMethodArgs& args);
 }

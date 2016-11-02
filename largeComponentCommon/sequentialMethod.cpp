@@ -21,6 +21,15 @@ namespace largeComponent
 		const std::vector<double>& opProbabilitiesD = contextObj.getOperationalProbabilitiesD();
 		std::size_t componentSize = contextObj.getComponentSize();
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
+
+		std::vector<int>& distinctParticles = args.distinctParticles;
+		distinctParticles.resize(args.initialRadius+1);
+		std::fill(distinctParticles.begin(), distinctParticles.end(), 0);
+
+		std::vector<double>& levelProbabilities = args.levelProbabilities;
+		levelProbabilities.resize(args.initialRadius+1);
+		std::fill(levelProbabilities.begin(), levelProbabilities.end(), 0);
+		
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
 		for(std::size_t i = 0; i < nVertices; i++)
 		{
@@ -38,7 +47,7 @@ namespace largeComponent
 		subObsSequential::observationConstructorType getObservationHelper;
 		observationSequential::subObsConstructorType getSubObsHelper;
 	
-		mpfr_class sumWeights = 0;
+		mpfr_class sumWeights = 0, previousSumWeights = args.n;
 
 		std::vector<int> alreadyOn, unfixed;
 		for(int currentRadius = args.initialRadius; currentRadius >= 0; currentRadius--)
@@ -54,8 +63,11 @@ namespace largeComponent
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
 					resamplingProbabilities.push_back(subObservations.back().getWeight().convert_to<double>());
+					distinctParticles[args.initialRadius - currentRadius]++;
 				}
 			}
+			levelProbabilities[args.initialRadius - currentRadius] = mpfr_class(sumWeights / previousSumWeights).convert_to<double>();
+			previousSumWeights = sumWeights;
 			if(currentRadius == 0) break;
 			if(sumWeights == 0)
 			{

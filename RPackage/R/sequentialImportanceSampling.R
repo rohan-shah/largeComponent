@@ -60,7 +60,7 @@ sequentialImportanceSampling <- function(probabilities, n, seed, graph, componen
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		estimate <- .Call("sequentialMethod", graph, probabilities, n, seed, componentSize, initialRadius, PACKAGE="largeComponent")
+		result <- .Call("sequentialMethod", graph, probabilities, n, seed, componentSize, initialRadius, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 
@@ -68,5 +68,5 @@ sequentialImportanceSampling <- function(probabilities, n, seed, graph, componen
 		stop("Input graph must have class \"igraph\", \"graphAM\" or \"graphNEL\"")
 	}
 	call <- match.call()
-	return(new("monteCarloResult", start = start, end = end, call = call, estimate = mpfr(estimate)))
+	return(new("sequentialImportanceResult", start = start, end = end, call = call, estimate = mpfr(result$estimate), distinctParticles = result$distinctParticles, levelProbabilities = result$levelProbabilities))
 }

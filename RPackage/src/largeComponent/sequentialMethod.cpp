@@ -74,6 +74,7 @@ BEGIN_RCPP
 	largeComponent::sequentialMethod(args);
 
 	std::string estimate_string = args.estimate.str(10, std::ios_base::dec);
-	return Rcpp::wrap(estimate_string);
+	Rcpp::List retVal = Rcpp::List::create(Rcpp::Named("estimate") = Rcpp::wrap(estimate_string), Rcpp::Named("levelProbabilities") = Rcpp::wrap(args.levelProbabilities), Rcpp::Named("distinctParticles") = Rcpp::wrap(args.distinctParticles));
+	return retVal;
 END_RCPP
 }
