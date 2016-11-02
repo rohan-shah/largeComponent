@@ -1,6 +1,7 @@
 #include "largeComponentCommon/conditionalMC.h"
 #include <boost/range/algorithm/random_shuffle.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/random_number_generator.hpp>
 namespace largeComponent
 {
 	void conditionalMC(conditionalMCArgs& args)
@@ -35,10 +36,11 @@ namespace largeComponent
 		mpfr_class weight = 1;
 		boost::random::uniform_real_distribution<> standardUniform;
 
+		boost::random_number_generator<boost::mt19937> generator(args.randomSource);
 		for(std::size_t i = 0; i < n; i++)
 		{
 			std::fill(statePtr, statePtr + nVertices, vertexState::unfixed_off());
-			boost::random_shuffle(indices);
+			boost::random_shuffle(indices, generator);
 			weight = 1;
 			for(std::size_t vertexCounter = 0; vertexCounter < nVertices; vertexCounter++)
 			{
@@ -50,7 +52,7 @@ namespace largeComponent
 				}
 				else
 				{
-					if(args.temporaries.table[args.temporaries.connectedComponents[indices[vertexCounter]]] < componentSize)
+					if(args.temporaries.table[args.temporaries.connectedComponents[indices[vertexCounter]]] < (int)componentSize)
 					{
 						if(standardUniform(args.randomSource) <= opProbabilitiesD[indices[vertexCounter]])
 						{
