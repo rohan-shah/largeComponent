@@ -34,6 +34,7 @@ namespace largeComponent
 		bool largeComponentPossible;
 		std::vector<int> components;
 		std::vector<int> table;
+		boost::shared_array<const int> order;
 	};
 }
 #endif

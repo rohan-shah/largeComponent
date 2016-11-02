@@ -16,6 +16,7 @@ namespace largeComponent
 		public:
 			mpfr_class weight;
 			boost::shared_array<double> importanceProbabilities;
+			boost::shared_array<const int> order;
 		};
 	}
 }

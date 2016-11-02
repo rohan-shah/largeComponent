@@ -12,10 +12,11 @@ namespace largeComponent
 		retVal.largeComponentPossible = largeComponentPossible;
 		retVal.components = components;
 		retVal.table = table;
+		retVal.order = order;
 		return retVal;
 	}
 	subObsSequential::subObsSequential(subObsSequential&& other)
-		:subObs(other), weight(other.weight), largeComponentPossible(other.largeComponentPossible), components(std::move(other.components)), table(std::move(other.table))
+		:subObs(other), weight(other.weight), largeComponentPossible(other.largeComponentPossible), components(std::move(other.components)), table(std::move(other.table)), order(std::move(other.order))
 	{}
 	subObsSequential& subObsSequential::operator=(subObsSequential&& other)
 	{
@@ -24,10 +25,11 @@ namespace largeComponent
 		largeComponentPossible = other.largeComponentPossible;
 		components = std::move(other.components);
 		table = std::move(other.table);
+		order = other.order;
 		return *this;
 	}
 	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::subObsConstructorTypes::sequentialConstructorType& constructorType)
-		: subObs(contextObj, state), weight(constructorType.weight)
+		: subObs(contextObj, state), weight(constructorType.weight), order(constructorType.order)
 	{
 		largeComponentPossible = ::largeComponent::isLargeComponentPossible(contextObj.getGraph(), state.get(), contextObj.getComponentSize(), constructorType.temporaries);
 		components.swap(constructorType.temporaries.connectedComponents);
@@ -67,5 +69,6 @@ namespace largeComponent
 			}
 		}
 		other.weight = weight;
+		other.order = order;
 	}
 }

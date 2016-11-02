@@ -13,6 +13,7 @@ namespace largeComponent
 		public:
 			isLargeComponentPossibleTemporaries temporaries;
 	 		mpfr_class weight;
+			boost::shared_array<const int> order;
 		};
 	}
 }

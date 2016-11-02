@@ -1,15 +1,23 @@
 #include "observationSequential.h"
 #include <boost/random/bernoulli_distribution.hpp>
+#include <boost/range/algorithm/random_shuffle.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/random/random_number_generator.hpp>
 namespace largeComponent
 {
 	observationSequential::observationSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::observationConstructorTypes::sequentialConstructorType& otherData)
-		: observation(contextObj, state), weight(otherData.weight), importanceProbabilities(otherData.importanceProbabilities)
+		: observation(contextObj, state), weight(otherData.weight), importanceProbabilities(otherData.importanceProbabilities), order(otherData.order)
 	{}
 	observationSequential::observationSequential(context const& contextObj, boost::mt19937& randomSource, boost::shared_array<const double> importanceProbabilities)
 		: observation(contextObj), weight(1), importanceProbabilities(importanceProbabilities)
 	{
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
 		boost::shared_array<vertexState> state(new vertexState[nVertices]);
+		boost::shared_array<int> order(new int[nVertices]);
+		for(std::size_t i = 0; i < nVertices; i++) order[i] = (int)i;
+		boost::iterator_range<int*> range = boost::make_iterator_range(order.get(), order.get() + nVertices);
+		boost::random_number_generator<boost::mt19937> generator(randomSource);
+		boost::random_shuffle(range, generator);
 
 		for(std::size_t i = 0; i < nVertices; i++)
 		{
@@ -24,6 +32,7 @@ namespace largeComponent
 			}
 		}
 		this->state = state;
+		this->order = order;
 	}
 	void observationSequential::getSubObservation(vertexState* newState, int radius, subObsConstructorType& other) const
 	{
@@ -46,12 +55,17 @@ namespace largeComponent
 			}
 		}
 		other.weight = newWeight * weight;
+		other.order = order;
 	}
 	observationSequential::observationSequential(observationSequential&& other)
-		: observation(other), weight(other.weight), importanceProbabilities(other.importanceProbabilities)
+		: observation(other), weight(other.weight), importanceProbabilities(other.importanceProbabilities), order(other.order)
 	{}
 	const mpfr_class& observationSequential::getWeight() const
 	{
 		return weight;
+	}
+	const int* observationSequential::getOrder() const
+	{
+		return order.get();
 	}
 }

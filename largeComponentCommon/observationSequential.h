@@ -25,10 +25,12 @@ namespace largeComponent
 		observationSequential& operator=(observationSequential&& other);
 		observationSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::observationConstructorTypes::sequentialConstructorType&);
 		const mpfr_class& getWeight() const;
+		const int* getOrder() const;
 	private:
 		void getSubObservation(vertexState* newState, int radius, subObsConstructorType& other) const;
 		mpfr_class weight;
 		boost::shared_array<const double> importanceProbabilities;
+		boost::shared_array<const int> order;
 	};
 }
 #endif
