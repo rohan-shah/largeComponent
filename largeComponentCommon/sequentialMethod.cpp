@@ -29,6 +29,10 @@ namespace largeComponent
 		std::vector<double>& levelProbabilities = args.levelProbabilities;
 		levelProbabilities.resize(args.initialRadius+1);
 		std::fill(levelProbabilities.begin(), levelProbabilities.end(), 0);
+
+		boost::numeric::ublas::matrix<int>& resamplingCounts = args.resamplingCounts;
+		resamplingCounts.resize(args.initialRadius, args.n, false);
+		std::fill(resamplingCounts.data().begin(), resamplingCounts.data().end(), 0);
 		
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
 		for(std::size_t i = 0; i < nVertices; i++)
@@ -85,6 +89,7 @@ namespace largeComponent
 				{
 					resampledSubObservations.push_back(i->copyWithWeight(averageWeight));
 				}
+				resamplingCounts(args.initialRadius - currentRadius, std::distance(subObservations.begin(), i)) += multiple;
 				remaining -= multiple;
 				resamplingProbabilities[std::distance(subObservations.begin(), i)] -= mpfr_class(averageWeight * multiple).convert_to<double>();
 				sumWeights -= averageWeight * multiple;
@@ -95,6 +100,7 @@ namespace largeComponent
 			{
 				int index = (int)alias(args.randomSource);
 				resampledSubObservations.push_back(subObservations[index].copyWithWeight(averageWeight));
+				resamplingCounts(args.initialRadius - currentRadius, index)++;
 			}
 			observations.clear();
 			for(std::vector<subObsSequential>::iterator i = resampledSubObservations.begin(); i != resampledSubObservations.end(); i++)

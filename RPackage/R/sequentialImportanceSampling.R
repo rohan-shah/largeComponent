@@ -68,5 +68,5 @@ sequentialImportanceSampling <- function(probabilities, n, seed, graph, componen
 		stop("Input graph must have class \"igraph\", \"graphAM\" or \"graphNEL\"")
 	}
 	call <- match.call()
-	return(new("sequentialImportanceResult", start = start, end = end, call = call, estimate = mpfr(result$estimate), distinctParticles = result$distinctParticles, levelProbabilities = result$levelProbabilities))
+	return(new("sequentialImportanceResult", start = start, end = end, call = call, estimate = mpfr(result$estimate), distinctParticles = result$distinctParticles, levelProbabilities = result$levelProbabilities, resamplingCounts = result$resamplingCounts))
 }

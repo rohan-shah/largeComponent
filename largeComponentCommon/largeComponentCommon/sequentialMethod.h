@@ -2,6 +2,7 @@
 #define SEQUENTIAL_METHOD_HEADER_GUARD
 #include "context.h"
 #include <boost/random/mersenne_twister.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 namespace largeComponent
 {
 	struct aliasTemporariesStruct
@@ -20,6 +21,7 @@ namespace largeComponent
 		aliasTemporariesStruct aliasTemporaries;
 		std::vector<double> levelProbabilities;
 		std::vector<int> distinctParticles;
+		boost::numeric::ublas::matrix<int> resamplingCounts;
 	};
 	void sequentialMethod(sequentialMethodArgs& args);
 }

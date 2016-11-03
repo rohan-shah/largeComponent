@@ -74,7 +74,17 @@ BEGIN_RCPP
 	largeComponent::sequentialMethod(args);
 
 	std::string estimate_string = args.estimate.str(10, std::ios_base::dec);
-	Rcpp::List retVal = Rcpp::List::create(Rcpp::Named("estimate") = Rcpp::wrap(estimate_string), Rcpp::Named("levelProbabilities") = Rcpp::wrap(args.levelProbabilities), Rcpp::Named("distinctParticles") = Rcpp::wrap(args.distinctParticles));
+	Rcpp::List resamplingCounts(initialRadius);
+	for(int i = 0; i < initialRadius; i++)
+	{
+		Rcpp::NumericVector currentRow(n);
+		for(int j = 0; j < n; j++)
+		{
+			currentRow(j) = args.resamplingCounts(i, j);
+		}
+		resamplingCounts(i) = currentRow;
+	}
+	Rcpp::List retVal = Rcpp::List::create(Rcpp::Named("estimate") = Rcpp::wrap(estimate_string), Rcpp::Named("levelProbabilities") = Rcpp::wrap(args.levelProbabilities), Rcpp::Named("distinctParticles") = Rcpp::wrap(args.distinctParticles), Rcpp::Named("resamplingCounts") = resamplingCounts);
 	return retVal;
 END_RCPP
 }
