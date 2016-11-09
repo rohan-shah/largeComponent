@@ -27,6 +27,8 @@ namespace largeComponent
 		bool isLargeComponentPossible() const;
 		const std::vector<int>& getTable() const;
 		const std::vector<int>& getComponents() const;
+		void setWeight(mpfr_class weight);
+		std::size_t getNFixed() const;
 	private:
 		subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state);
 		void getObservation(vertexState* newState, boost::mt19937& randomSource, observationConstructorType& other) const;
@@ -35,6 +37,7 @@ namespace largeComponent
 		std::vector<int> components;
 		std::vector<int> table;
 		boost::shared_array<const int> order;
+		std::size_t nFixed;
 	};
 }
 #endif

@@ -46,7 +46,7 @@ namespace largeComponent
 		}
 
 		std::vector<subObsSequential> subObservations, resampledSubObservations;
-		std::vector<double> resamplingProbabilities;
+		std::vector<double> remainingImportanceWeight, remainingAuxiliaryWeight;
 		
 		subObsSequential::observationConstructorType getObservationHelper;
 		observationSequential::subObsConstructorType getSubObsHelper;
@@ -54,24 +54,34 @@ namespace largeComponent
 		mpfr_class sumWeights = 0, previousSumWeights = args.n;
 
 		std::vector<int> alreadyOn, unfixed;
+		std::vector<double> copyRemainingAuxiliaryWeight;
 		for(int currentRadius = args.initialRadius; currentRadius >= 0; currentRadius--)
 		{
 			subObservations.clear();
-			resamplingProbabilities.clear();
+			remainingImportanceWeight.clear();
+			remainingImportanceWeight.reserve(args.n);
+
+			remainingAuxiliaryWeight.clear();
+			remainingAuxiliaryWeight.reserve(args.n);
 			sumWeights = 0;
+			mpfr_class sumAuxiliaryWeight = 0;
 			for(std::vector<observationSequential>::iterator i = observations.begin(); i != observations.end(); i++)
 			{
 				subObsSequential sub = getSubObservation<observationSequential>::get(*i, currentRadius, getSubObsHelper);
 				if(sub.isLargeComponentPossible())
 				{
+					mpfr_class auxiliaryWeight = boost::multiprecision::pow(sub.getWeight(), 8.0/sub.getNFixed());
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
-					resamplingProbabilities.push_back(subObservations.back().getWeight().convert_to<double>());
+					sumAuxiliaryWeight += auxiliaryWeight;
+					remainingAuxiliaryWeight.push_back(auxiliaryWeight.convert_to<double>());
+					remainingImportanceWeight.push_back(subObservations.back().getWeight().convert_to<double>());
 					distinctParticles[args.initialRadius - currentRadius]++;
 				}
 			}
 			levelProbabilities[args.initialRadius - currentRadius] = mpfr_class(sumWeights / previousSumWeights).convert_to<double>();
 			previousSumWeights = sumWeights;
+			mpfr_class meanAuxiliaryWeight = sumAuxiliaryWeight / args.n;
 			if(currentRadius == 0) break;
 			if(sumWeights == 0)
 			{
@@ -79,28 +89,41 @@ namespace largeComponent
 				return;
 			}
 			//stratified resampling
-			mpfr_class averageWeight = sumWeights / args.n;
 			std::size_t remaining = args.n;
 			resampledSubObservations.clear();
 			for(std::vector<subObsSequential>::iterator i = subObservations.begin(); i != subObservations.end(); i++)
 			{
-				std::size_t multiple = (std::size_t)mpfr_class(i->getWeight() / averageWeight).convert_to<double>();
+				double& currentRemainingAuxiliaryWeight = remainingAuxiliaryWeight[std::distance(subObservations.begin(), i)];
+				std::size_t multiple = (std::size_t)mpfr_class(currentRemainingAuxiliaryWeight / meanAuxiliaryWeight).convert_to<double>();
+				mpfr_class weightOfCopy = (meanAuxiliaryWeight / currentRemainingAuxiliaryWeight) * i->getWeight();
 				for(std::size_t j = 0; j < multiple; j++)
 				{
-					resampledSubObservations.push_back(i->copyWithWeight(averageWeight));
+					resampledSubObservations.push_back(i->copyWithWeight(weightOfCopy));
 				}
 				resamplingCounts(args.initialRadius - currentRadius, std::distance(subObservations.begin(), i)) += multiple;
 				remaining -= multiple;
-				resamplingProbabilities[std::distance(subObservations.begin(), i)] -= mpfr_class(averageWeight * multiple).convert_to<double>();
-				sumWeights -= averageWeight * multiple;
+				currentRemainingAuxiliaryWeight -= mpfr_class(meanAuxiliaryWeight * multiple).convert_to<double>();
+				sumAuxiliaryWeight -= meanAuxiliaryWeight * multiple;
+				remainingImportanceWeight[std::distance(subObservations.begin(), i)] -= mpfr_class(weightOfCopy * multiple).convert_to<double>();
+				sumWeights -= weightOfCopy * multiple;
 			}
 			//leftovers
-			aliasMethod::aliasMethod alias(resamplingProbabilities, sumWeights.convert_to<double>(), args.aliasTemporaries.temporary1, args.aliasTemporaries.temporary2, args.aliasTemporaries.temporary3);
+			copyRemainingAuxiliaryWeight = remainingAuxiliaryWeight;
+			aliasMethod::aliasMethod alias(copyRemainingAuxiliaryWeight, sumAuxiliaryWeight.convert_to<double>(), args.aliasTemporaries.temporary1, args.aliasTemporaries.temporary2, args.aliasTemporaries.temporary3);
+			//Sum of the weights for the randomly chosen units (the non-stratified ones)
+			mpfr_class randomWeightsSum = 0;
 			for(std::size_t j = 0; j < remaining; j++)
 			{
 				int index = (int)alias(args.randomSource);
-				resampledSubObservations.push_back(subObservations[index].copyWithWeight(averageWeight));
+				mpfr_class newWeight = remainingImportanceWeight[index] / remainingAuxiliaryWeight[index];
+				randomWeightsSum += newWeight;
+				resampledSubObservations.push_back(subObservations[index].copyWithWeight(newWeight));
 				resamplingCounts(args.initialRadius - currentRadius, index)++;
+			}
+			for(std::size_t j = 0; j < remaining; j++)
+			{
+				subObsSequential& current = resampledSubObservations[resampledSubObservations.size() - 1 - j];
+				current.setWeight(current.getWeight() * sumWeights / randomWeightsSum);
 			}
 			observations.clear();
 			for(std::vector<subObsSequential>::iterator i = resampledSubObservations.begin(); i != resampledSubObservations.end(); i++)

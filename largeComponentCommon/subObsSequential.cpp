@@ -13,10 +13,11 @@ namespace largeComponent
 		retVal.components = components;
 		retVal.table = table;
 		retVal.order = order;
+		retVal.nFixed = nFixed;
 		return retVal;
 	}
 	subObsSequential::subObsSequential(subObsSequential&& other)
-		:subObs(other), weight(other.weight), largeComponentPossible(other.largeComponentPossible), components(std::move(other.components)), table(std::move(other.table)), order(std::move(other.order))
+		:subObs(other), weight(other.weight), largeComponentPossible(other.largeComponentPossible), components(std::move(other.components)), table(std::move(other.table)), order(std::move(other.order)), nFixed(other.nFixed)
 	{}
 	subObsSequential& subObsSequential::operator=(subObsSequential&& other)
 	{
@@ -26,14 +27,21 @@ namespace largeComponent
 		components = std::move(other.components);
 		table = std::move(other.table);
 		order = other.order;
+		nFixed = other.nFixed;
 		return *this;
 	}
 	subObsSequential::subObsSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::subObsConstructorTypes::sequentialConstructorType& constructorType)
-		: subObs(contextObj, state), weight(constructorType.weight), order(constructorType.order)
+		: subObs(contextObj, state), weight(constructorType.weight), order(constructorType.order), nFixed(0)
 	{
 		largeComponentPossible = ::largeComponent::isLargeComponentPossible(contextObj.getGraph(), state.get(), contextObj.getComponentSize(), constructorType.temporaries);
 		components.swap(constructorType.temporaries.connectedComponents);
 		table.swap(constructorType.temporaries.table);
+
+		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
+		for(std::size_t i = 0; i < nVertices; i++)
+		{
+			if(state[i].state & FIXED_MASK) nFixed++;
+		}
 	}
 	const std::vector<int>& subObsSequential::getTable() const
 	{
@@ -70,5 +78,13 @@ namespace largeComponent
 		}
 		other.weight = weight;
 		other.order = order;
+	}
+	void subObsSequential::setWeight(mpfr_class weight)
+	{
+		this->weight = std::move(weight);
+	}
+	std::size_t subObsSequential::getNFixed() const
+	{
+		return nFixed;
 	}
 }
