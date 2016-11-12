@@ -12,7 +12,7 @@ namespace largeComponent
 		{
 		public:
 			isLargeComponentPossibleTemporaries temporaries;
-	 		mpfr_class weight;
+	 		mpfr_class weight, geometricMeanAdditional;
 			boost::shared_array<const int> order;
 		};
 	}

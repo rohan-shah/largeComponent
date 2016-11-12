@@ -40,6 +40,7 @@ namespace largeComponent
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
 		const std::vector<mpfr_class>& opProbabilities = contextObj.getOperationalProbabilities();
 		mpfr_class newWeight = 1;
+		std::size_t nNewFixed = 0;
 		for(std::size_t i = 0; i < nVertices; i++)
 		{
 			if(newState[i].state != state[i].state && (newState[i].state & FIXED_MASK))
@@ -52,10 +53,12 @@ namespace largeComponent
 				{
 					newWeight *= (1 - opProbabilities[i]) / (1 - importanceProbabilities[i]);
 				}
+				nNewFixed++;
 			}
 		}
 		other.weight = newWeight * weight;
 		other.order = order;
+		other.geometricMeanAdditional = boost::multiprecision::pow(newWeight, 1.0 / nNewFixed);
 	}
 	observationSequential::observationSequential(observationSequential&& other)
 		: observation(other), weight(other.weight), importanceProbabilities(other.importanceProbabilities), order(other.order)

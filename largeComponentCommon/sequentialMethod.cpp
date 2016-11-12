@@ -70,7 +70,7 @@ namespace largeComponent
 				subObsSequential sub = getSubObservation<observationSequential>::get(*i, currentRadius, getSubObsHelper);
 				if(sub.isLargeComponentPossible())
 				{
-					mpfr_class auxiliaryWeight = boost::multiprecision::pow(sub.getWeight(), 8.0/sub.getNFixed());
+					mpfr_class auxiliaryWeight = sub.getGeometricMeanAdditional();
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
 					sumAuxiliaryWeight += auxiliaryWeight;
