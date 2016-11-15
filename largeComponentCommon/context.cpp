@@ -24,7 +24,7 @@ namespace largeComponent
 		this->shortestDistances = shortestDistances;
 	}
 	context::context(context&& other)
-		: opProbabilities(std::move(opProbabilities)), opProbabilitiesD(std::move(opProbabilitiesD)), graph(other.graph), shortestDistances(other.shortestDistances), componentSize(other.componentSize)
+		: opProbabilities(std::move(other.opProbabilities)), opProbabilitiesD(std::move(other.opProbabilitiesD)), graph(other.graph), shortestDistances(other.shortestDistances), componentSize(other.componentSize)
 	{}
 	const context::inputGraph& context::getGraph() const
 	{

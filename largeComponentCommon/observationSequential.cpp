@@ -167,14 +167,14 @@ namespace largeComponent
 				nNewFixed++;
 			}
 			other.weight = newWeight * weight;
-			other.geometricMeanAdditional = boost::multiprecision::pow(newWeight, 1.0 / nNewFixed);
+			other.geometricMeanAdditional = pow(newWeight.convert_to<double>(), 1.0 / nNewFixed);
 			other.order = order;
 		}
 		else
 		{
 			other.weight = newWeight * weight;
 			other.order = order;
-			other.geometricMeanAdditional = boost::multiprecision::pow(newWeight, 1.0 / nNewFixed);
+			other.geometricMeanAdditional = pow(newWeight.convert_to<double>(), 1.0 / nNewFixed);
 		}
 	}
 	observationSequential::observationSequential(observationSequential&& other)
