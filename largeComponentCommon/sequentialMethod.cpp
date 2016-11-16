@@ -35,10 +35,11 @@ namespace largeComponent
 		std::fill(resamplingCounts.data().begin(), resamplingCounts.data().end(), 0);
 		
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
-		for(std::size_t i = 0; i < nVertices; i++)
+		std::copy(opProbabilitiesD.begin(), opProbabilitiesD.end(), initialImportanceProbabilities.get());
+		/*for(std::size_t i = 0; i < nVertices; i++)
 		{
 			initialImportanceProbabilities[i] = (double)componentSize / (double)nVertices;
-		}
+		}*/
 
 		for(std::size_t i = 0; i < args.n; i++)
 		{
@@ -71,6 +72,7 @@ namespace largeComponent
 				if(sub.isLargeComponentPossible())
 				{
 					mpfr_class auxiliaryWeight = sub.getGeometricMeanAdditional();
+					volatile double tmp = auxiliaryWeight.convert_to<double>();
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
 					sumAuxiliaryWeight += auxiliaryWeight;
@@ -100,7 +102,7 @@ namespace largeComponent
 				{
 					resampledSubObservations.push_back(i->copyWithWeight(weightOfCopy));
 				}
-				resamplingCounts(args.initialRadius - currentRadius, std::distance(subObservations.begin(), i)) += multiple;
+				resamplingCounts(args.initialRadius - currentRadius, std::distance(subObservations.begin(), i)) += (int)multiple;
 				remaining -= multiple;
 				currentRemainingAuxiliaryWeight -= mpfr_class(meanAuxiliaryWeight * multiple).convert_to<double>();
 				sumAuxiliaryWeight -= meanAuxiliaryWeight * multiple;
@@ -151,20 +153,28 @@ namespace largeComponent
 						unfixed[components[j]]++;
 					}
 				}
-				for(std::size_t j = 0; j < nVertices; j++)
+				/*for(std::size_t j = 0; j < nVertices; j++)
 				{
 					if(!(currentSubObsVertexState[j].state & FIXED_MASK))
 					{
-						if(table[components[j]] >= (int)componentSize)
+						//This component already has enough vertices, the question is whether they actually end up being joined together. In this case we don't do any importance sampling. 
+						if (alreadyOn[components[j]] >= componentSize)
+						{
+							importanceProbabilities[j] = opProbabilitiesD[j];
+						}
+						//This component could potentially have enough vertices. So we do importance sampling to make up the difference. 
+						else if(table[components[j]] >= (int)componentSize)
 						{
 							importanceProbabilities[j] = (double)(componentSize - alreadyOn[components[j]]) / (double)unfixed[components[j]];
 						}
+						//This component can't possibly be big enough, so don't bother with the importance sampling. 
 						else
 						{
 							importanceProbabilities[j] = opProbabilitiesD[j];
 						}
 					}
-				}
+				}*/
+				std::copy(opProbabilitiesD.begin(), opProbabilitiesD.end(), importanceProbabilities);
 				observationSequential obs = getObservation<subObsSequential>::get(*i, args.randomSource, getObservationHelper);
 				observations.emplace_back(std::move(obs));
 			}

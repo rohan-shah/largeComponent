@@ -77,8 +77,8 @@ BEGIN_RCPP
 	Rcpp::List resamplingCounts(initialRadius);
 	for(int i = 0; i < initialRadius; i++)
 	{
-		Rcpp::NumericVector currentRow(n);
-		for(int j = 0; j < n; j++)
+		Rcpp::NumericVector currentRow(args.distinctParticles[i]);
+		for(int j = 0; j < args.distinctParticles[i]; j++)
 		{
 			currentRow(j) = args.resamplingCounts(i, j);
 		}
