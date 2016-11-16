@@ -1,0 +1,16 @@
+#!/bin/bash -l
+#
+#$ -N largeComponent
+#$ -q low.q
+#$ -pe threaded 1
+#$ -w e
+#$ -l h_vmem=20G
+#$ -l h_rt=24:00:00
+#$ -l s_rt=23:59:50
+#$ -v SCENARIO_INDEX
+#$ -S /bin/bash
+#$ -cwd
+#$ -j y
+#$ -R y
+R CMD BATCH --no-restore --no-save simulation.R simulation.Rout.$SCENARIO_INDEX
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+module unload intel-cc intel-fc
+module load gcc/4.9.2
+R CMD BATCH --no-restore --no-save simulation.R simulation.Rout.$SCENARIO_INDEX
