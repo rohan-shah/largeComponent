@@ -4,4 +4,4 @@ sampleSize <- 10000L
 methods <- c("SIS", "importance", "conditional")
 
 scenarios <- expand.grid(method = methods, sampleSize = sampleSize, thresholdProportion = thresholdProportion, graphSize = graphSize, stringsAsFactors=FALSE)
-scenarios$fileName <- paste0(scenarios$method, "-", scenarios$sampleSize, "-", scenarios$thresholdProportion, "-", scenarios$graphSize)
+scenarios$fileName <- paste0(scenarios$method, "-", scenarios$sampleSize, "-", scenarios$thresholdProportion, "-", scenarios$graphSize, ".RData")

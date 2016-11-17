@@ -5,6 +5,7 @@
 #include <boost/random/random_number_generator.hpp>
 #include "constructSubGraph.h"
 #include <boost/graph/biconnected_components.hpp>
+#include <boost/graph/connected_components.hpp>
 namespace largeComponent
 {
 	observationSequential::observationSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::observationConstructorTypes::sequentialConstructorType& otherData)
@@ -93,6 +94,7 @@ namespace largeComponent
 			for(std::vector<int>::iterator i = articulationVertices.begin(); i != articulationVertices.end(); i++) alreadyCounted[*i] = isArticulation[*i] = true;
 
 			int nBiconnectedComponents = *std::max_element(biconnectedIds.begin(), biconnectedIds.end())+1;
+			int nComponentsGraphVertices =  nBiconnectedComponents + (int)articulationVertices.size();
 			std::vector<int> biconnectedComponentSizes(nBiconnectedComponents, 0);
 
 			//Count the sizes of every component (ignoring the articulation vertices, which are contained in multiple components. 
@@ -109,7 +111,7 @@ namespace largeComponent
 
 			//Ok, now we create an even *more* reduced graph, containing the articulation vertices and the biconnected components. The vertex names are the values that we take the sum of, in order to work out the number of vertices that *might* be in that part of the graph. The ordering of the vertex *IDS* is that the first nBiconnectedComponents vertices represent the biconnected components, and the remaining vertices represent the articulation vertices, in the order given in articulationVertices.  
 			typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, boost::property<boost::vertex_name_t, int>, boost::no_property> componentsGraphType;
-			componentsGraphType componentsGraph(nBiconnectedComponents + articulationVertices.size());
+			componentsGraphType componentsGraph(nComponentsGraphVertices);
 			for(int i = 0; i < nBiconnectedComponents; i++)
 			{
 				boost::put(boost::vertex_name, componentsGraph, i, biconnectedComponentSizes[i]);
@@ -127,16 +129,33 @@ namespace largeComponent
 				{
 					subGraphType::edge_descriptor currentEdge = *currentOut;
 					int biconnectedComponentId = biconnectedIds[boost::get(boost::edge_index, reducedGraph, currentEdge)];
-					boost::add_edge(nBiconnectedComponents + articulationVertices[i], biconnectedComponentId, componentsGraph);
+					boost::add_edge(nBiconnectedComponents + i, biconnectedComponentId, componentsGraph);
 				}
 			}
-			//Ok, now iterate through the articulation vertices and see which ones divide the graph into two parts *BOTH* of which are too small. 
-			std::vector<int> mustBeOn;
-			typedef boost::color_traits<boost::default_color_type> Color;
-			//Colour vector used to break the graph into parts
-			std::vector<boost::default_color_type> colourVector(boost::num_vertices(componentsGraph));
 			//visitor used to accumulate the vertex_name attributes over the different parts
 			countVisitor accumulator;
+			typedef boost::color_traits<boost::default_color_type> Color;
+			//Colour vector for depth-first visit of componentsGraph
+			std::vector<boost::default_color_type> colourVector(nComponentsGraphVertices, Color::white());
+			std::vector<int> mustBeOn;
+			if(componentSize <= (int)nVertices / 2)
+			{
+				//If there is more than one (connected) component which has the potential to be large, then we can't really do any conditioning. In theory we could do some inclusion / exclusion calculation, but in practice it probably won't be worth it. 
+				std::vector<int> componentIDs(nComponentsGraphVertices, -1);
+				int nConnectedComponents = boost::connected_components(componentsGraph, &(componentIDs[0]), boost::color_map(&(colourVector[0])));
+				//Table of the number of vertices in every component
+				std::vector<int> table(nConnectedComponents, 0);
+				for(int i = 0; i < nComponentsGraphVertices; i++)
+				{
+					table[componentIDs[i]]++;
+				}
+				int possibleLarge = 0;
+				for(int i = 0; i < nConnectedComponents; i++) possibleLarge += (table[i] >= componentSize);
+				if(possibleLarge > 1) goto skipConditioning;
+			}
+
+			//Ok, now iterate through the articulation vertices and see which ones divide the graph into two parts *BOTH* of which are too small. 
+			//Here the colour vector is used to break the biconnected components apart at the articulation vertices. 
 			for(int i = 0; i < (int)articulationVertices.size(); i++)
 			{
 				componentsGraphType::out_edge_iterator currentOut, endOut;
@@ -148,6 +167,7 @@ namespace largeComponent
 				if(newState[originalVertex].state & FIXED_MASK) continue;
 				//Mark the articulation vertex as being removed. 
 				colourVector[nBiconnectedComponents + i] = Color::black();
+				int currentComponentMaxSize = 0;
 				for(; currentOut != endOut; currentOut++)
 				{
 					componentsGraphType::edge_descriptor edge = *currentOut;
@@ -157,15 +177,23 @@ namespace largeComponent
 					{
 						accumulator.count = 0;
 						boost::depth_first_visit(componentsGraph, startingVertex, accumulator, &(colourVector[0]));
-						//In this case we don't need this articulation vertex to be present, in order to 
-						if(accumulator.count >= componentSize) continue;;
+						//In this case we don't need this articulation vertex to be present, in order to have a large component
+						if(accumulator.count >= componentSize) goto skipCurrentArticulationVertex;
+						currentComponentMaxSize += accumulator.count;
 					}
 				}
-				//If we get to here then we really need this vertex. 
-				newState[originalVertex] = vertexState::fixed_on();
-				newWeight *= opProbabilities[originalVertex];
-				nNewFixed++;
+				currentComponentMaxSize++;
+				if(currentComponentMaxSize >= componentSize)
+				{
+					//If we get to here then we really need this vertex. 
+					newState[originalVertex] = vertexState::fixed_on();
+					newWeight *= opProbabilities[originalVertex];
+					nNewFixed++;
+				}
+skipCurrentArticulationVertex:
+				;
 			}
+skipConditioning:
 			other.weight = newWeight * weight;
 			other.geometricMeanAdditional = pow(newWeight.convert_to<double>(), 1.0 / nNewFixed);
 			other.order = order;

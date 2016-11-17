@@ -31,10 +31,10 @@ if(method == "SIS")
 		for(i in start:1000)
 		{
 			results[[i]] <- sequentialImportanceSampling(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, initialRadius = round(graphSize * 0.75))
-			if(i %% 100 == 0) save(results, file = file.path(results, fileName))
+			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
 			cat(i, " ", sep = "")
 		}
-		save(results, file = file.path(results, fileName))
+		save(results, file = file.path("results", fileName))
 	}
 } else if(method == "importance")
 {
@@ -44,10 +44,10 @@ if(method == "SIS")
 		for(i in start:1000)
 		{
 			results[[i]] <- importanceSampling(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, importanceProbabilities = rep(thresholdCount / (graphSize * graphSize), graphSize * graphSize))
-			if(i %% 100 == 0) save(results, file = file.path(results, fileName))
+			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
 			cat(i, " ", sep = "")
 		}
-		save(results, file = file.path(results, fileName))
+		save(results, file = file.path("results", fileName))
 	}
 } else if(method == "conditional")
 {
@@ -57,10 +57,10 @@ if(method == "SIS")
 		for(i in start:1000)
 		{
 			results[[i]] <- conditionalMC(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, importanceProbabilities = rep(thresholdCount / (graphSize * graphSize), graphSize * graphSize))
-			if(i %% 100 == 0) save(results, file = file.path(results, fileName))
+			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
 			cat(i, " ", sep = "")
 		}
-		save(results, file = file.path(results, fileName))
+		save(results, file = file.path("results", fileName))
 	}
 } else
 {
