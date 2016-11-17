@@ -11,8 +11,8 @@ namespace largeComponent
 	observationSequential::observationSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::observationConstructorTypes::sequentialConstructorType& otherData)
 		: observation(contextObj, state), weight(otherData.weight), importanceProbabilities(otherData.importanceProbabilities), order(otherData.order)
 	{}
-	observationSequential::observationSequential(context const& contextObj, boost::mt19937& randomSource, boost::shared_array<const double> importanceProbabilities)
-		: observation(contextObj), weight(1), importanceProbabilities(importanceProbabilities)
+	observationSequential::observationSequential(context const& contextObj, boost::mt19937& randomSource, boost::shared_array<double const> importanceProbabilities_)
+		: observation(contextObj), weight(1), importanceProbabilities(importanceProbabilities_)
 	{
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
 		boost::shared_array<vertexState> state(new vertexState[nVertices]);

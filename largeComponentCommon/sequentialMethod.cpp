@@ -3,6 +3,7 @@
 #include "subObsSequential.h"
 #include "isLargeComponentPossible.h"
 #include "aliasMethod.h"
+#include "importanceDensity.h"
 namespace largeComponent
 {
 	sequentialMethodArgs::sequentialMethodArgs(const context& contextObj, boost::random::mt19937& randomSource)
@@ -35,11 +36,7 @@ namespace largeComponent
 		std::fill(resamplingCounts.data().begin(), resamplingCounts.data().end(), 0);
 		
 		boost::shared_array<double> initialImportanceProbabilities(new double[nVertices]);
-		std::copy(opProbabilitiesD.begin(), opProbabilitiesD.end(), initialImportanceProbabilities.get());
-		/*for(std::size_t i = 0; i < nVertices; i++)
-		{
-			initialImportanceProbabilities[i] = (double)componentSize / (double)nVertices;
-		}*/
+		importanceDensity(initialImportanceProbabilities, opProbabilitiesD, componentSize);
 
 		for(std::size_t i = 0; i < args.n; i++)
 		{
@@ -72,7 +69,6 @@ namespace largeComponent
 				if(sub.isLargeComponentPossible())
 				{
 					mpfr_class auxiliaryWeight = sub.getGeometricMeanAdditional();
-					volatile double tmp = auxiliaryWeight.convert_to<double>();
 					subObservations.emplace_back(std::move(sub));
 					sumWeights += subObservations.back().getWeight();
 					sumAuxiliaryWeight += auxiliaryWeight;
@@ -153,19 +149,19 @@ namespace largeComponent
 						unfixed[components[j]]++;
 					}
 				}
-				/*for(std::size_t j = 0; j < nVertices; j++)
+				for(std::size_t j = 0; j < nVertices; j++)
 				{
 					if(!(currentSubObsVertexState[j].state & FIXED_MASK))
 					{
 						//This component already has enough vertices, the question is whether they actually end up being joined together. In this case we don't do any importance sampling. 
-						if (alreadyOn[components[j]] >= componentSize)
+						if (alreadyOn[components[j]] >= (int)componentSize)
 						{
 							importanceProbabilities[j] = opProbabilitiesD[j];
 						}
 						//This component could potentially have enough vertices. So we do importance sampling to make up the difference. 
 						else if(table[components[j]] >= (int)componentSize)
 						{
-							importanceProbabilities[j] = (double)(componentSize - alreadyOn[components[j]]) / (double)unfixed[components[j]];
+							importanceProbabilities[j] = initialImportanceProbabilities[j];
 						}
 						//This component can't possibly be big enough, so don't bother with the importance sampling. 
 						else
@@ -173,8 +169,7 @@ namespace largeComponent
 							importanceProbabilities[j] = opProbabilitiesD[j];
 						}
 					}
-				}*/
-				std::copy(opProbabilitiesD.begin(), opProbabilitiesD.end(), importanceProbabilities);
+				}
 				observationSequential obs = getObservation<subObsSequential>::get(*i, args.randomSource, getObservationHelper);
 				observations.emplace_back(std::move(obs));
 			}

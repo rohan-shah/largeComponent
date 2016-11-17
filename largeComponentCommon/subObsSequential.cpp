@@ -56,7 +56,7 @@ namespace largeComponent
 	void subObsSequential::getObservation(vertexState* newState, boost::mt19937& randomSource, observationConstructorType& other) const
 	{
 		std::size_t nVertices = boost::num_vertices(contextObj.getGraph());
-		double* importanceProbabilities = other.importanceProbabilities.get();
+		const double* importanceProbabilities = other.importanceProbabilities.get();
 		memcpy(newState, state.get(), sizeof(vertexState)*nVertices);
 		for(std::size_t i = 0; i < nVertices; i++)
 		{

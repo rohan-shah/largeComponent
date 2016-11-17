@@ -20,7 +20,7 @@ namespace largeComponent
 		typedef subObsSequential subObservationType;
 		typedef subObsConstructorTypes::sequentialConstructorType subObsConstructorType;
 
-		observationSequential(context const& contextObj, boost::mt19937& randomSource, boost::shared_array<const double> importanceProbabilities);
+		observationSequential(context const& contextObj, boost::mt19937& randomSource, boost::shared_array<double const> importanceProbabilities);
 		observationSequential(observationSequential&& other);
 		observationSequential& operator=(observationSequential&& other);
 		observationSequential(context const& contextObj, boost::shared_array<const vertexState> state, ::largeComponent::observationConstructorTypes::sequentialConstructorType&);
