@@ -4,6 +4,7 @@
 #include "importanceSampling.h"
 #include "conditionalMC.h"
 #include "sequentialMethod.h"
+#include "defaultImportanceDensity.h"
 #ifdef _MSC_VER
 	#undef RcppExport
 	#define RcppExport extern "C" __declspec(dllexport)
@@ -17,6 +18,7 @@ extern "C"
 		{"importanceSampling", (DL_FUNC)&importanceSampling, 6}, 
 		{"conditionalMC", (DL_FUNC)&conditionalMC, 6}, 
 		{"sequentialMethod", (DL_FUNC)&sequentialMethod, 6}, 
+		{"defaultImportanceDensity", (DL_FUNC)&defaultImportanceDensity, 2},
 		{NULL, NULL, 0}
 	};
 	RcppExport void R_init_largeComponent(DllInfo *info)

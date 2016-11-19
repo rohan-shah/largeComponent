@@ -1,4 +1,5 @@
 source("./generateScenarios.R")
+library(Rmpfr)
 variance <- mean <- re <- wnrv <- vector(mode = "numeric", length = nrow(scenarios))
 for(i in 1:nrow(scenarios))
 {

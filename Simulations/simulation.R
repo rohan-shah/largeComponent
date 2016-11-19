@@ -30,13 +30,13 @@ if(method == "SIS")
 		start <- length(results)+1
 		for(i in start:replications)
 		{
-			results[[i]] <- sequentialImportanceSampling(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, initialRadius = round(graphSize * 0.75))
+			results[[i]] <- sequentialImportanceSampling(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, initialRadius = round(graphSize * 0.3))
 			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
 			cat(i, " ", sep = "")
 		}
 		save(results, file = file.path("results", fileName))
 	}
-} else if(method == "importance")
+} else if(method == "importanceUniform")
 {
 	if(length(results) < replications)
 	{
@@ -49,7 +49,7 @@ if(method == "SIS")
 		}
 		save(results, file = file.path("results", fileName))
 	}
-} else if(method == "conditional")
+} else if(method == "conditionalUniform")
 {
 	if(length(results) < replications)
 	{
@@ -57,6 +57,34 @@ if(method == "SIS")
 		for(i in start:replications)
 		{
 			results[[i]] <- conditionalMC(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, importanceProbabilities = rep(thresholdCount / (graphSize * graphSize), graphSize * graphSize))
+			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
+			cat(i, " ", sep = "")
+		}
+		save(results, file = file.path("results", fileName))
+	}
+} else if(method == "importanceNonUniform")
+{
+	if(length(results) < replications)
+	{
+		importanceProbabilities <- .Call("defaultImportanceDensity", vertexProbabilities, thresholdCount, PACKAGE="largeComponent")
+		start <- length(results)+1
+		for(i in start:replications)
+		{
+			results[[i]] <- importanceSampling(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, importanceProbabilities = importanceProbabilities)
+			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
+			cat(i, " ", sep = "")
+		}
+		save(results, file = file.path("results", fileName))
+	}
+} else if(method == "conditionalNonUniform")
+{
+	if(length(results) < replications)
+	{
+		importanceProbabilities <- .Call("defaultImportanceDensity", vertexProbabilities, thresholdCount, PACKAGE="largeComponent")
+		start <- length(results)+1
+		for(i in start:replications)
+		{
+			results[[i]] <- conditionalMC(probabilities = vertexProbabilities, n = sampleSize, seed = i, graph = graph, componentSize = thresholdCount, importanceProbabilities = importanceProbabilities)
 			if(i %% 100 == 0) save(results, file = file.path("results", fileName))
 			cat(i, " ", sep = "")
 		}
