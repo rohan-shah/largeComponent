@@ -181,7 +181,7 @@ namespace largeComponent
 					std::vector<double> originalProbabilitiesSubsetVertices;
 					for(std::size_t j = 0; j < nVertices; j++)
 					{
-						if(currentSubObsVertexState[j].state & UNFIXED_MASK)
+						if(currentSubObsVertexState[j].state & UNFIXED_MASK && components[j] == largeComponentId)
 						{
 							originalProbabilitiesSubsetVertices.push_back(opProbabilitiesD[j]);
 						}
@@ -190,7 +190,7 @@ namespace largeComponent
 					int counter = 0;
 					for(std::size_t j = 0; j < nVertices; j++)
 					{
-						if(currentSubObsVertexState[j].state & UNFIXED_MASK)
+						if(currentSubObsVertexState[j].state & UNFIXED_MASK && components[j] == largeComponentId)
 						{
 							importanceProbabilities[j] = std::max(opProbabilitiesD[j], importanceProbabilitiesSubsetVertices[counter]);
 							counter++;
