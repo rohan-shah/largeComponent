@@ -57,7 +57,9 @@ namespace largeComponent
 		std::vector<int> alreadyOn, unfixed;
 		std::vector<double> copyRemainingAuxiliaryWeight;
 
+#ifndef NDEBUG
 		observationCollection radiusOneDist(&contextObj, 1);
+#endif
 		for(int currentRadius = args.initialRadius; currentRadius >= 0; currentRadius--)
 		{
 			subObservations.clear();
@@ -86,6 +88,7 @@ namespace largeComponent
 			previousSumWeights = sumWeights;
 			mpfr_class meanAuxiliaryWeight = sumAuxiliaryWeight / args.n;
 			if(currentRadius == 0) break;
+#ifndef NDEBUG
 			if(currentRadius == 1)
 			{
 				for(std::vector<subObsSequential>::iterator i = subObservations.begin(); i != subObservations.end(); i++)
@@ -93,6 +96,7 @@ namespace largeComponent
 					radiusOneDist.add(*i);
 				}
 			}
+#endif
 			if(sumWeights == 0)
 			{
 				args.estimate = 0;
@@ -161,24 +165,35 @@ namespace largeComponent
 						unfixed[components[j]]++;
 					}
 				}
-				for(std::size_t j = 0; j < nVertices; j++)
+				int countLargeComponents = 0, largeComponentId = 0;
+				for(std::vector<int>::const_iterator j = table.begin(); j != table.end(); j++)
 				{
-					if(!(currentSubObsVertexState[j].state & FIXED_MASK))
+					if(*j >= (int)componentSize) 
 					{
-						//This component already has enough vertices, the question is whether they actually end up being joined together. In this case we don't do any importance sampling. 
-						if (alreadyOn[components[j]] >= (int)componentSize)
+						countLargeComponents++;
+						largeComponentId = std::distance(table.begin(), j);
+					}
+				}
+				std::copy(opProbabilitiesD.begin(), opProbabilitiesD.end(), importanceProbabilities);
+				if(countLargeComponents == 1 && alreadyOn[largeComponentId] < (int)componentSize)
+				{
+					boost::shared_array<double> importanceProbabilitiesSubsetVertices(new double[unfixed[largeComponentId]]);
+					std::vector<double> originalProbabilitiesSubsetVertices;
+					for(std::size_t j = 0; j < nVertices; j++)
+					{
+						if(currentSubObsVertexState[j].state & UNFIXED_MASK)
 						{
-							importanceProbabilities[j] = opProbabilitiesD[j];
+							originalProbabilitiesSubsetVertices.push_back(opProbabilitiesD[j]);
 						}
-						//This component could potentially have enough vertices. So we do importance sampling to make up the difference. 
-						else if(table[components[j]] >= (int)componentSize)
+					}
+					importanceDensity(importanceProbabilitiesSubsetVertices, originalProbabilitiesSubsetVertices, componentSize - alreadyOn[largeComponentId]);
+					int counter = 0;
+					for(std::size_t j = 0; j < nVertices; j++)
+					{
+						if(currentSubObsVertexState[j].state & UNFIXED_MASK)
 						{
-							importanceProbabilities[j] = initialImportanceProbabilities[j];
-						}
-						//This component can't possibly be big enough, so don't bother with the importance sampling. 
-						else
-						{
-							importanceProbabilities[j] = opProbabilitiesD[j];
+							importanceProbabilities[j] = std::max(opProbabilitiesD[j], importanceProbabilitiesSubsetVertices[counter]);
+							counter++;
 						}
 					}
 				}
@@ -187,9 +202,10 @@ namespace largeComponent
 			}
 		}
 		args.estimate = sumWeights / args.n;
-
+#ifndef NDEBUG
 		std::ofstream outputStream("./radiusOneDist", std::ios_base::binary);
 		boost::archive::binary_oarchive outputArchive(outputStream);
 		outputArchive << radiusOneDist;
+#endif
 	}
 }
