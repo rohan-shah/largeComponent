@@ -1,5 +1,5 @@
 #' @export
-importanceSampling <- function(probabilities, n, seed, graph, componentSize, importanceProbabilities)
+importanceSampling <- function(probabilities, n, seed, graph, componentSize, importanceProbabilities, vertexPositions = matrix(data=vector(length=0),nrow=0))
 {
 	if(missing(graph))
 	{
@@ -60,7 +60,7 @@ importanceSampling <- function(probabilities, n, seed, graph, componentSize, imp
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		result <- .Call("importanceSampling", graph, probabilities, n, seed, componentSize, importanceProbabilities, PACKAGE="largeComponent")
+		result <- .Call("importanceSampling", graph, probabilities, n, seed, componentSize, importanceProbabilities, vertexPositions, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 

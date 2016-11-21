@@ -2,6 +2,16 @@
 #include <boost/random/uniform_real_distribution.hpp>
 namespace largeComponent
 {
+	observation::observation(context const& contextObj, boost::archive::binary_iarchive& archive)
+		: contextObj(contextObj)
+	{
+		archive >> *this;
+	}
+	observation::observation(context const& contextObj, boost::archive::text_iarchive& archive)
+		: contextObj(contextObj)
+	{
+		archive >> *this;
+	}
 	observation::observation(const context& contextObj, boost::shared_array<const vertexState> state)
 		: contextObj(contextObj), state(state)
 	{}
@@ -59,7 +69,7 @@ namespace largeComponent
 	observation::observation(const observation& other)
 		: contextObj(other.contextObj), state(other.state)
 	{}
-	observation::observation(context const&, boost::shared_array<const vertexState> state, observationConstructorTypes::basicConstructorType&)
+	observation::observation(context const& contextObj, boost::shared_array<const vertexState> state, observationConstructorTypes::basicConstructorType&)
 		: contextObj(contextObj), state(state)
 	{}
 	void observation::getSubObservation(int radius, vertexState* outputState) const
@@ -115,5 +125,13 @@ namespace largeComponent
 			}
 			else sourceVertex++;
 		}
+	}
+	const observation& observationWithContext::getObs() const
+	{
+		return *obs.get();
+	}
+	const context& observationWithContext::getContext() const
+	{
+		return *contextObj.get();
 	}
 }

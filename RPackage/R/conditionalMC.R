@@ -1,5 +1,5 @@
 #' @export
-conditionalMC <- function(probabilities, n, seed, graph, componentSize, importanceProbabilities)
+conditionalMC <- function(probabilities, n, seed, graph, componentSize, importanceProbabilities, vertexPositions = matrix(data=vector(length=0),nrow=0))
 {
 	if(missing(graph))
 	{
@@ -60,7 +60,7 @@ conditionalMC <- function(probabilities, n, seed, graph, componentSize, importan
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		result <- .Call("conditionalMC", graph, probabilities, n, seed, componentSize, importanceProbabilities, PACKAGE="largeComponent")
+		result <- .Call("conditionalMC", graph, probabilities, n, seed, componentSize, importanceProbabilities, vertexPositions, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 

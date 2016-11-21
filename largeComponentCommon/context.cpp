@@ -3,10 +3,14 @@
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
 namespace largeComponent
 {
-	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities, std::size_t componentSize)
-		:opProbabilities(opProbabilities), graph(graph), componentSize(componentSize)
+	context::context(boost::shared_ptr<const inputGraph> graph, std::vector<mpfr_class>& opProbabilities, boost::shared_ptr<std::vector<vertexPosition> > vertexPositions, std::size_t componentSize)
+		:opProbabilities(opProbabilities), graph(graph), componentSize(componentSize), vertexPositions(vertexPositions)
 	{
 		std::size_t nVertices = boost::num_vertices(*graph.get());
+		if(vertexPositions->size() != 0 && vertexPositions->size() != nVertices)
+		{
+			throw std::runtime_error("Input vertexPositions must have an entry for every vertex, or zero entries");
+		}
 		if(opProbabilities.size() == 1 && opProbabilities.size() != nVertices)
 		{
 			this->opProbabilities.insert(this->opProbabilities.end(), nVertices - 1, opProbabilities[0]);
@@ -40,6 +44,7 @@ namespace largeComponent
 		opProbabilitiesD = std::move(other.opProbabilitiesD);
 		shortestDistances = other.shortestDistances;
 		componentSize = other.componentSize;
+		vertexPositions = other.vertexPositions;
 		return *this;
 	}
 	const std::vector<mpfr_class>& context::getOperationalProbabilities() const
@@ -57,5 +62,9 @@ namespace largeComponent
 	std::size_t context::getComponentSize() const
 	{
 		return componentSize;
+	}
+	const std::vector<context::vertexPosition>& context::getVertexPositions() const
+	{
+		return *vertexPositions.get();
 	}
 }

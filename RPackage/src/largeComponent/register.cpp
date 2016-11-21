@@ -14,11 +14,11 @@ extern "C"
 	const char* package_name = "largeComponent";
 	R_CallMethodDef callMethods[] = 
 	{
-		{"crudeMC", (DL_FUNC)&crudeMC, 5}, 
-		{"importanceSampling", (DL_FUNC)&importanceSampling, 6}, 
-		{"conditionalMC", (DL_FUNC)&conditionalMC, 6}, 
-		{"sequentialMethod", (DL_FUNC)&sequentialMethod, 6}, 
 		{"defaultImportanceDensity", (DL_FUNC)&defaultImportanceDensity, 2},
+		{"crudeMC", (DL_FUNC)&crudeMC, 6}, 
+		{"importanceSampling", (DL_FUNC)&importanceSampling, 7}, 
+		{"conditionalMC", (DL_FUNC)&conditionalMC, 7}, 
+		{"sequentialMethod", (DL_FUNC)&sequentialMethod, 7}, 
 		{NULL, NULL, 0}
 	};
 	RcppExport void R_init_largeComponent(DllInfo *info)
