@@ -6,6 +6,7 @@ set(Boost_USE_MULTITHREADED	ON)
 set(Boost_USE_STATIC_RUNTIME	OFF)
 
 option(BUILD_R_PACKAGE "Build R package" ON)
+option(BUILD_VISUALISATION "Build Visualisation" OFF)
 
 add_definitions("-DBOOST_NO_AUTO_PTR")
 if(CMAKE_COMPILER_IS_GNUCC)
@@ -30,6 +31,10 @@ endif()
 
 add_subdirectory(largeComponentCommon)
 add_subdirectory(copyText)
+if(BUILD_VISUALISATION)
+	find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+	add_subdirectory(subObservationVisualiser)
+endif()
 if(BUILD_R_PACKAGE)
 	find_package(R REQUIRED)
 	add_subdirectory(RPackage)

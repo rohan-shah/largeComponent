@@ -1,5 +1,5 @@
 #' @export
-crudeMC <- function(probabilities, n, seed, graph, componentSize)
+crudeMC <- function(probabilities, n, seed, graph, componentSize, vertexPositions = matrix(data=vector(length=0),nrow=0))
 {
 	if(missing(graph))
 	{
@@ -48,7 +48,7 @@ crudeMC <- function(probabilities, n, seed, graph, componentSize)
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		estimate <- .Call("crudeMC", graph, probabilities, n, seed, componentSize, PACKAGE="largeComponent")
+		estimate <- .Call("crudeMC", graph, probabilities, n, seed, componentSize, vertexPositions, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 

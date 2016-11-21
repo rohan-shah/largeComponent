@@ -34,6 +34,10 @@ namespace largeComponent
 			ret.state = UNFIXED_ON;
 			return ret;
 		}
+                template<class Archive> void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & state;
+		};
 	};
 }
 #endif

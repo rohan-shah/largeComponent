@@ -3,7 +3,7 @@
 #include "graphAMInterface.h"
 #include "graphNELInterface.h"
 #include "graphConvert.h"
-largeComponent::context graphInterface(SEXP graph_sexp, SEXP probabilities_sexp, std::size_t componentSize)
+largeComponent::context graphInterface(SEXP graph_sexp, SEXP probabilities_sexp, std::size_t componentSize, boost::shared_ptr<std::vector<largeComponent::context::vertexPosition> > vertexPositions)
 {
 	//Convert probability
 	std::vector<largeComponent::mpfr_class> probabilities;
@@ -26,6 +26,6 @@ largeComponent::context graphInterface(SEXP graph_sexp, SEXP probabilities_sexp,
 		throw std::runtime_error("Input probabilities must contain a single value, or a value for each vertex");
 	}
 
-	largeComponent::context contextObj(boostGraph, probabilities, componentSize);
+	largeComponent::context contextObj(boostGraph, probabilities, vertexPositions, componentSize);
 	return contextObj;
 }

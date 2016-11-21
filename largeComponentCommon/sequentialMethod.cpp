@@ -4,6 +4,9 @@
 #include "isLargeComponentPossible.h"
 #include "aliasMethod.h"
 #include "importanceDensity.h"
+#include "empiricalDistribution.cpp"
+#include "observationCollection.h"
+#include <boost/archive/binary_oarchive.hpp>
 namespace largeComponent
 {
 	sequentialMethodArgs::sequentialMethodArgs(const context& contextObj, boost::random::mt19937& randomSource)
@@ -53,6 +56,8 @@ namespace largeComponent
 
 		std::vector<int> alreadyOn, unfixed;
 		std::vector<double> copyRemainingAuxiliaryWeight;
+
+		observationCollection radiusOneDist(&contextObj, 1);
 		for(int currentRadius = args.initialRadius; currentRadius >= 0; currentRadius--)
 		{
 			subObservations.clear();
@@ -81,6 +86,13 @@ namespace largeComponent
 			previousSumWeights = sumWeights;
 			mpfr_class meanAuxiliaryWeight = sumAuxiliaryWeight / args.n;
 			if(currentRadius == 0) break;
+			if(currentRadius == 1)
+			{
+				for(std::vector<subObsSequential>::iterator i = subObservations.begin(); i != subObservations.end(); i++)
+				{
+					radiusOneDist.add(*i);
+				}
+			}
 			if(sumWeights == 0)
 			{
 				args.estimate = 0;
@@ -175,5 +187,9 @@ namespace largeComponent
 			}
 		}
 		args.estimate = sumWeights / args.n;
+
+		std::ofstream outputStream("./radiusOneDist", std::ios_base::binary);
+		boost::archive::binary_oarchive outputArchive(outputStream);
+		outputArchive << radiusOneDist;
 	}
 }

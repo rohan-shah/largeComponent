@@ -40,11 +40,18 @@ namespace largeComponent
 	struct countVisitor : public boost::default_dfs_visitor
 	{
 	public:
+		countVisitor(int& count)
+			:count(count)
+		{}
+		countVisitor(const countVisitor& other)
+			: count(other.count)
+		{}
 		template<typename Vertex, typename Graph> void discover_vertex(Vertex u, const Graph& g)
 		{
 			count += boost::get(boost::vertex_name, g, u);
 		}
-		int count;
+	private:
+		int& count;
 	};
 	void observationSequential::getSubObservation(vertexState* newState, int radius, subObsConstructorType& other) const
 	{
@@ -133,7 +140,8 @@ namespace largeComponent
 				}
 			}
 			//visitor used to accumulate the vertex_name attributes over the different parts
-			countVisitor accumulator;
+			int accumulatorCount = 0;
+			countVisitor accumulator(accumulatorCount);
 			typedef boost::color_traits<boost::default_color_type> Color;
 			//Colour vector for depth-first visit of componentsGraph
 			std::vector<boost::default_color_type> colourVector(nComponentsGraphVertices, Color::white());
@@ -175,11 +183,11 @@ namespace largeComponent
 					if(startingVertex == articulationVertices[i]) startingVertex = boost::source(edge, componentsGraph);
 					if(colourVector[startingVertex] == Color::white())
 					{
-						accumulator.count = 0;
+						accumulatorCount = 0;
 						boost::depth_first_visit(componentsGraph, startingVertex, accumulator, &(colourVector[0]));
 						//In this case we don't need this articulation vertex to be present, in order to have a large component
-						if(accumulator.count >= componentSize) goto skipCurrentArticulationVertex;
-						currentComponentMaxSize += accumulator.count;
+						if(accumulatorCount >= componentSize) goto skipCurrentArticulationVertex;
+						currentComponentMaxSize += accumulatorCount;
 					}
 				}
 				currentComponentMaxSize++;

@@ -1,5 +1,5 @@
 #' @export
-sequentialImportanceSampling <- function(probabilities, n, seed, graph, componentSize, initialRadius)
+sequentialImportanceSampling <- function(probabilities, n, seed, graph, componentSize, initialRadius, vertexPositions = matrix(data=vector(length=0),nrow=0))
 {
 	if(missing(graph))
 	{
@@ -60,7 +60,7 @@ sequentialImportanceSampling <- function(probabilities, n, seed, graph, componen
 	if(class(graph) %in% c("igraph", "graphNEL", "graphAM"))
 	{
 		start <- Sys.time()
-		result <- .Call("sequentialMethod", graph, probabilities, n, seed, componentSize, initialRadius, PACKAGE="largeComponent")
+		result <- .Call("sequentialMethod", graph, probabilities, n, seed, componentSize, initialRadius, vertexPositions, PACKAGE="largeComponent")
 		end <- Sys.time()
 	}
 	else 
